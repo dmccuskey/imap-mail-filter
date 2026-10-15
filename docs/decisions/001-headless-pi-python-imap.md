@@ -8,7 +8,7 @@ Mail filtering previously depended on rules in a GUI mail client running on a Ma
 
 ## Decision
 
-Run Mail Filter as a lightweight, headless Python program on an always-on Raspberry Pi. Connect directly to each configured account using IMAP over SSL through Python's `imaplib`.
+Run IMAP Mail Filter as a lightweight, headless Python program on an always-on Raspberry Pi. Connect directly to each configured account using IMAP over SSL through Python's `imaplib`.
 
 The program is configuration-driven: it connects to an account, selects its `INBOX`, processes unseen messages, applies configured rules, expunges pending deletions after the account's processing loop, and logs the results.
 

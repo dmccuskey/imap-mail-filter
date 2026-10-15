@@ -18,7 +18,7 @@ from unittest import mock
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import mail_filter  # noqa: E402
+import imap_mail_filter  # noqa: E402
 import imap_recording  # noqa: E402
 
 FIXTURES = Path(__file__).resolve().parent / "fixtures" / "imap"
@@ -34,9 +34,9 @@ def replay(batch):
     """Run process_account against one recorded batch; return its log lines."""
     fake = imap_recording.RecordedIMAP(batch["exchanges"])
     out = io.StringIO()
-    with mock.patch.object(mail_filter.imaplib, "IMAP4_SSL", fake), \
+    with mock.patch.object(imap_mail_filter.imaplib, "IMAP4_SSL", fake), \
             redirect_stdout(out):
-        mail_filter.process_account(
+        imap_mail_filter.process_account(
             {**ACCOUNT, "dry_run": batch["dry_run"]}, batch["folders"], batch["rules"], test_run_id=batch["test_run_id"])
     return [line.split("] ", 1)[-1] for line in out.getvalue().splitlines()]
 
@@ -60,14 +60,14 @@ class RecordingMachineryTests(unittest.TestCase):
     def scrubber(self):
         return imap_recording.Scrubber(
             "me@private.example", "mail.private.example", "my-account",
-            keep_prefixes=["INBOX.mail-filter-live-tests"])
+            keep_prefixes=["INBOX.imap-mail-filter-live-tests"])
 
     def test_list_reply_keeps_only_standard_and_test_mailboxes(self):
         reply = ("OK", [
             b'(\\HasChildren) "." INBOX',
             b'(\\HasNoChildren) "." "INBOX.Taxes 2025"',
             b'(\\HasNoChildren \\Trash) "." INBOX.Trash',
-            b'(\\HasNoChildren) "." INBOX.mail-filter-live-tests.moved',
+            b'(\\HasNoChildren) "." INBOX.imap-mail-filter-live-tests.moved',
             (b'(\\HasNoChildren) "." {9}', b'Corbeille'),
             b'(\\HasNoChildren) "." "INBOX.Taxes 2025"',
         ])
@@ -76,7 +76,7 @@ class RecordingMachineryTests(unittest.TestCase):
             b'(\\HasChildren) "." "INBOX"',
             b'(\\HasNoChildren) "." "Folder-1"',
             b'(\\HasNoChildren \\Trash) "." "INBOX.Trash"',
-            b'(\\HasNoChildren) "." "INBOX.mail-filter-live-tests.moved"',
+            b'(\\HasNoChildren) "." "INBOX.imap-mail-filter-live-tests.moved"',
             b'(\\HasNoChildren) "." "Folder-2"',
             b'(\\HasNoChildren) "." "Folder-1"',
         ]))
@@ -149,12 +149,12 @@ class RecordingMachineryTests(unittest.TestCase):
             ("list", ('""', "*"), ("OK", [
                 b'(\\HasChildren) "." "INBOX"',
                 b'(\\Trash) "." "INBOX.Papierkorb"',
-                b'(\\HasNoChildren) "." "INBOX.mail-filter-live-tests.moved"',
+                b'(\\HasNoChildren) "." "INBOX.imap-mail-filter-live-tests.moved"',
                 b'(\\HasNoChildren) "." "Folder-3"',
             ])),
             ("uid", ("FETCH", b"7", "(BODY.PEEK[])"), ("OK", [
-                (b"1 (UID 7 BODY[] {9}", b"From: mail-filter live test <live-test@example.org>\r\n"
-                                         b"Message-ID: <mft1xa.move@mail-filter.invalid>"),
+                (b"1 (UID 7 BODY[] {9}", b"From: imap-mail-filter live test <live-test@example.org>\r\n"
+                                         b"Message-ID: <mft1xa.move@imap-mail-filter.invalid>"),
                 b")"])),
         ], log=["[test] Connecting to imap.example.com as user@example.com"]), [])
 

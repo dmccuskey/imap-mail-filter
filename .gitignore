@@ -4,7 +4,6 @@ accounts.local.json5
 folders.local.json5
 
 # Logs
-mailfilter.log
 *.log
 
 # Python junk

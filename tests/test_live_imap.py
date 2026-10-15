@@ -7,10 +7,10 @@ everything they created. Run them with imap_tests.py, not unittest discover;
 see docs/development.md#testing.
 
 Every test message is marked three ways (see ADR 008):
-  Subject:            [mail-filter testing only] <run id> <batch id> <case> ...
-  X-Mail-Filter-Test: <batch id>       (the batch id starts with the run id)
-  Message-ID:         <<batch id>.<case>@mail-filter.invalid>
-Nothing is modified or deleted until its X-Mail-Filter-Test header is verified.
+  Subject:            [imap-mail-filter testing only] <run id> <batch id> <case> ...
+  X-Imap-Mail-Filter-Test: <batch id>       (the batch id starts with the run id)
+  Message-ID:         <<batch id>.<case>@imap-mail-filter.invalid>
+Nothing is modified or deleted until its X-Imap-Mail-Filter-Test header is verified.
 """
 import email
 import imaplib
@@ -34,18 +34,18 @@ from unittest import mock
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import mail_filter  # noqa: E402
+import imap_mail_filter  # noqa: E402
 import imap_recording  # noqa: E402
 
-LIVE = os.environ.get("MAILFILTER_LIVE_TESTS") == "1"
-KEEP = os.environ.get("MAILFILTER_LIVE_KEEP") == "1"
-RECORD = os.environ.get("MAILFILTER_LIVE_RECORD") == "1"
-ACCOUNTS_ENV = "MAILFILTER_LIVE_ACCOUNTS"  # comma-separated IDs; empty means all
+LIVE = os.environ.get("IMAP_MAIL_FILTER_LIVE_TESTS") == "1"
+KEEP = os.environ.get("IMAP_MAIL_FILTER_LIVE_KEEP") == "1"
+RECORD = os.environ.get("IMAP_MAIL_FILTER_LIVE_RECORD") == "1"
+ACCOUNTS_ENV = "IMAP_MAIL_FILTER_LIVE_ACCOUNTS"  # comma-separated IDs; empty means all
 
-BASE = Path(mail_filter.__file__).resolve().parent
-TEST_ROOT = "mail-filter-live-tests"
-MARKER = mail_filter.TEST_SUBJECT_MARKER
-SWEEP_QUERY = "mail-filter testing only"  # the marker's words; brackets upset Gmail search
+BASE = Path(imap_mail_filter.__file__).resolve().parent
+TEST_ROOT = "imap-mail-filter-live-tests"
+MARKER = imap_mail_filter.TEST_SUBJECT_MARKER
+SWEEP_QUERY = "imap-mail-filter testing only"  # the marker's words; brackets upset Gmail search
 WAIT_SECONDS = 15  # Gmail's search can lag behind APPEND and moves
 STALE_AFTER = timedelta(hours=1)  # older runs' leftovers are swept at startup
 LOG_FILE = BASE / "imap_tests.log"  # the filter's full output; imap_tests.py empties it
@@ -72,13 +72,13 @@ def is_stale(test_id, now=None):
 def load_live_accounts(environ):
     """
     Return ({account_id: cfg}, problems) for the accounts to test: those
-    named in MAILFILTER_LIVE_ACCOUNTS, else every account with test_enabled.
+    named in IMAP_MAIL_FILTER_LIVE_ACCOUNTS, else every account with test_enabled.
     """
     try:
-        accounts_all = mail_filter.load_json(BASE / "accounts.local.json5")
+        accounts_all = imap_mail_filter.load_json(BASE / "accounts.local.json5")
     except (OSError, ValueError) as e:
         return {}, [f"cannot read accounts.local.json5: {e}"]
-    problems = mail_filter.validate_config_format(accounts_all, {})
+    problems = imap_mail_filter.validate_config_format(accounts_all, {})
     if problems:
         return {}, problems
 
@@ -86,18 +86,18 @@ def load_live_accounts(environ):
     for name in names:
         if name not in accounts_all:
             problems.append(f"account '{name}' is not in accounts.local.json5")
-        elif not mail_filter.test_enabled(accounts_all[name]):
+        elif not imap_mail_filter.test_enabled(accounts_all[name]):
             problems.append(f"account '{name}' has \"test_enabled\": false")
     if problems:
         return {}, problems
 
     selected = {
         account_id: cfg for account_id, cfg in accounts_all.items()
-        if (account_id in names if names else mail_filter.test_enabled(cfg))
+        if (account_id in names if names else imap_mail_filter.test_enabled(cfg))
     }
     if not selected:
         return {}, ["no account has test_enabled; nothing to test"]
-    return selected, mail_filter.validate_passwords(selected, environ)
+    return selected, imap_mail_filter.validate_passwords(selected, environ)
 
 
 def response_bytes(data):
@@ -132,11 +132,11 @@ class LiveServer:
 
     def __init__(self, cfg):
         self.imap = imaplib.IMAP4_SSL(cfg["imap_host"], timeout=60)
-        self.imap.login(cfg["username"], mail_filter.account_password(cfg))
-        self.is_gmail = mail_filter.detect_gmail(self.imap)
+        self.imap.login(cfg["username"], imap_mail_filter.account_password(cfg))
+        self.is_gmail = imap_mail_filter.detect_gmail(self.imap)
         status, data = self.imap.capability()
         self.uidplus = status == "OK" and b"UIDPLUS" in response_bytes(data).upper().split()
-        self.trash, self.trash_problem = mail_filter.find_advertised_trash(self.imap)
+        self.trash, self.trash_problem = imap_mail_filter.find_advertised_trash(self.imap)
         self.all_mail = self.mailbox_with_attribute(b"\\all")
         self.prefix, self.delimiter = self.namespace()
         self.created = []  # folders this run created, children first
@@ -162,13 +162,13 @@ class LiveServer:
         if status != "OK":
             return None
         for entry in entries or []:
-            parsed = mail_filter.parse_list_entry(entry)
+            parsed = imap_mail_filter.parse_list_entry(entry)
             if parsed and attribute in parsed[0].lower().split():
                 return parsed[1].decode("ascii", errors="replace")
         return None
 
     def folder(self, name):
-        """A test folder's full mailbox name, e.g. "INBOX.mail-filter-live-tests.moved"."""
+        """A test folder's full mailbox name, e.g. "INBOX.imap-mail-filter-live-tests.moved"."""
         if not name:
             return self.prefix + TEST_ROOT
         if self.delimiter is None:  # flat server: no hierarchy
@@ -177,7 +177,7 @@ class LiveServer:
 
     def exists(self, mailbox):
         status, entries = self.imap.list('""', quoted(mailbox))
-        return status == "OK" and any(mail_filter.parse_list_entry(e) for e in entries or [])
+        return status == "OK" and any(imap_mail_filter.parse_list_entry(e) for e in entries or [])
 
     def create_folders(self, names):
         parent = self.folder(None)
@@ -216,9 +216,9 @@ class LiveServer:
         found = {}
         for uid in (data[0] or b"").split():
             status, data = self.imap.uid(
-                "FETCH", uid, "(BODY.PEEK[HEADER.FIELDS (MESSAGE-ID X-MAIL-FILTER-TEST)])")
-            headers = email.message_from_bytes(mail_filter.fetched_body(data) or b"")
-            test_id = (headers.get(mail_filter.TEST_HEADER) or "").strip()
+                "FETCH", uid, "(BODY.PEEK[HEADER.FIELDS (MESSAGE-ID X-IMAP-MAIL-FILTER-TEST)])")
+            headers = email.message_from_bytes(imap_mail_filter.fetched_body(data) or b"")
+            test_id = (headers.get(imap_mail_filter.TEST_HEADER) or "").strip()
             if status != "OK" or not test_id:
                 continue  # not a test message: never touched
             status, data = self.imap.uid("FETCH", uid, "(FLAGS)")
@@ -285,7 +285,7 @@ class LiveServer:
     def delete_empty_test_folders(self):
         """
         Delete the harness's own folders that are empty, whichever run created
-        them. The mail-filter-live-tests name belongs only to these tests.
+        them. The imap-mail-filter-live-tests name belongs only to these tests.
         Returns the folders deleted.
         """
         deleted = []
@@ -442,20 +442,20 @@ class LiveAccountMixin:
         rules = {"rules": []}
         for case, do in BATCHES[batch]:
             subject = f"{MARKER} {cls.run_id} {batch_id} {case} live test"
-            message_id = f"<{batch_id}.{case}@mail-filter.invalid>"
+            message_id = f"<{batch_id}.{case}@imap-mail-filter.invalid>"
             cls.subjects[case] = subject
             cls.message_ids[case] = message_id
             from_name, from_addr = HEADERS_FROM if case == "headers" else (
-                "mail-filter live test", "live-test@example.org")
+                "imap-mail-filter live test", "live-test@example.org")
             message = EmailMessage()
             message["From"] = Address(from_name, addr_spec=from_addr)
             message["To"] = HEADERS_TO if case == "headers" else "live-test@example.org"
             message["Subject"] = subject
             message["Date"] = formatdate(localtime=True)
             message["Message-ID"] = message_id
-            message[mail_filter.TEST_HEADER] = batch_id
+            message[imap_mail_filter.TEST_HEADER] = batch_id
             message.set_content(
-                "Created by mail-filter's live IMAP tests (imap_tests.py); safe to delete.\n")
+                "Created by imap-mail-filter's live IMAP tests (imap_tests.py); safe to delete.\n")
             cls.server.append(message)
 
             match = {"subject_contains": f"{batch_id} {case} "}
@@ -482,8 +482,8 @@ class LiveAccountMixin:
         test_run_id = None if normal_run else batch_id
         out = io.StringIO()
         with redirect_stdout(out), \
-                mock.patch.object(mail_filter.imaplib, "IMAP4_SSL", imap_class):
-            mail_filter.process_account(account, folders, rules, test_run_id=test_run_id)
+                mock.patch.object(imap_mail_filter.imaplib, "IMAP4_SSL", imap_class):
+            imap_mail_filter.process_account(account, folders, rules, test_run_id=test_run_id)
         cls.logs[batch] = [line.split("] ", 1)[-1] for line in out.getvalue().splitlines()]
         cls.recording.append({
             "batch": batch,

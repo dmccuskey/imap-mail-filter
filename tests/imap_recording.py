@@ -19,7 +19,7 @@ import re
 from collections import defaultdict, deque
 from datetime import date
 
-import mail_filter
+import imap_mail_filter
 
 # Stand-ins for the recorded account's identifying details
 PLACEHOLDER_USER = "user@example.com"
@@ -61,7 +61,7 @@ class Scrubber:
         status, entries = reply
         scrubbed = []
         for entry in entries or []:
-            parsed = mail_filter.parse_list_entry(entry)
+            parsed = imap_mail_filter.parse_list_entry(entry)
             if parsed is None:
                 scrubbed.append(entry)
                 continue
@@ -190,10 +190,10 @@ class RecordedIMAP:
 
 
 # Addresses allowed in a recording: placeholders, test senders, test Message-IDs
-ALLOWED_ADDRESS_DOMAINS = ("example.com", "example.org", "example.net", "mail-filter.invalid")
+ALLOWED_ADDRESS_DOMAINS = ("example.com", "example.org", "example.net", "imap-mail-filter.invalid")
 ADDRESS = re.compile(r"[\w.+-]+@([\w-]+(?:\.[\w-]+)+)")
 PLACEHOLDER_FOLDER = re.compile(rb"^Folder-\d+$")
-TEST_FOLDER_ROOT = b"mail-filter-live-tests"
+TEST_FOLDER_ROOT = b"imap-mail-filter-live-tests"
 
 
 def recording_problems(path, accounts):
@@ -245,7 +245,7 @@ def recording_problems(path, accounts):
             if method != "list":
                 continue
             for entry in reply[1] or []:
-                parsed = mail_filter.parse_list_entry(entry)
+                parsed = imap_mail_filter.parse_list_entry(entry)
                 if parsed and not folder_name_allowed(*parsed):
                     problems.append(f"lists a personal mailbox name: {parsed[1]!r}")
     return sorted(set(problems))

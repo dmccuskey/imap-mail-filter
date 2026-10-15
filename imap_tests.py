@@ -10,7 +10,7 @@ Run the live IMAP tests against real servers (see docs/development.md#testing).
   python3 imap_tests.py --check-recordings     check the recordings for identifying
                                                details (no server is contacted)
 
-The tests create messages marked "[mail-filter testing only]" in each tested
+The tests create messages marked "[imap-mail-filter testing only]" in each tested
 account's INBOX, run the filter on them, and then delete what they created.
 """
 import argparse
@@ -29,11 +29,11 @@ def check_recordings():
     Check every recording in tests/fixtures/imap/ for details that identify
     the accounts in accounts.local.json5. Returns True if all are clean.
     """
-    import mail_filter
+    import imap_mail_filter
     import imap_recording
 
     try:
-        accounts = mail_filter.load_json(BASE / "accounts.local.json5")
+        accounts = imap_mail_filter.load_json(BASE / "accounts.local.json5")
     except (OSError, ValueError) as e:
         print(f"ERROR: cannot read accounts.local.json5: {e}")
         return False
@@ -72,10 +72,10 @@ def main():
         sys.exit(0 if check_recordings() else 1)
 
     # The live test module reads these when it is imported
-    os.environ["MAILFILTER_LIVE_TESTS"] = "1"
-    os.environ["MAILFILTER_LIVE_KEEP"] = "1" if args.keep else ""
-    os.environ["MAILFILTER_LIVE_RECORD"] = "1" if args.record else ""
-    os.environ["MAILFILTER_LIVE_ACCOUNTS"] = ",".join(args.accounts)
+    os.environ["IMAP_MAIL_FILTER_LIVE_TESTS"] = "1"
+    os.environ["IMAP_MAIL_FILTER_LIVE_KEEP"] = "1" if args.keep else ""
+    os.environ["IMAP_MAIL_FILTER_LIVE_RECORD"] = "1" if args.record else ""
+    os.environ["IMAP_MAIL_FILTER_LIVE_ACCOUNTS"] = ",".join(args.accounts)
 
     import test_live_imap as live
 

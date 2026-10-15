@@ -1,8 +1,8 @@
-# Mail Filter Development
+# IMAP Mail Filter Development
 
 ## Development Philosophy
 
-Mail Filter is a live system that operates on real email.
+IMAP Mail Filter is a live system that operates on real email.
 
 Development should therefore favor:
 
@@ -43,7 +43,7 @@ This baseline should remain easy to restore.
 
 ## Possible Future Changes
 
-Decided work is tracked as [GitHub issues](https://github.com/dmccuskey/mail-filter/issues). The ideas below have come up but are not decided. Each needs further discussion before it is worked on, and should be implemented only when there is a concrete use case.
+Decided work is tracked as [GitHub issues](https://github.com/dmccuskey/imap-mail-filter/issues). The ideas below have come up but are not decided. Each needs further discussion before it is worked on, and should be implemented only when there is a concrete use case.
 
 ### Rule Features
 
@@ -70,13 +70,13 @@ Before implementation, each feature should be defined in terms of:
 
 ### Testing
 
-Left open when the live IMAP tests were added ([issue #1](https://github.com/dmccuskey/mail-filter/issues/1)):
+Left open when the live IMAP tests were added ([issue #1](https://github.com/dmccuskey/imap-mail-filter/issues/1)):
 
 - offline rule regression tests: check that the real `rules.local.json5` routes known messages to the expected rule, with one command and no server. Most useful for large or often-edited rule sets; with a small set, spotting a misrouted message in the mail client, moving it back to `INBOX`, and adjusting the rule with `"dry_run": true` works well.
   - examples as a gitignored case file of `{from, to, subject}` and the expected rule (or none), run through `choose_rule()`;
   - or, closer to real mail, a gitignored folder of `.eml` files (for example dragged out of Apple Mail), which also tests header parsing on what senders actually send: `To` headers without your address, MIME-encoded subjects and names, folded headers;
   - the `.eml` version needs header parsing (recipients, decoded subject, sender name and address) moved out of `process_account()` into a helper.
-- Gmail: a live check that a moved message keeps its other labels ([issue #2](https://github.com/dmccuskey/mail-filter/issues/2))
+- Gmail: a live check that a moved message keeps its other labels ([issue #2](https://github.com/dmccuskey/imap-mail-filter/issues/2))
 - Dovecot in Docker: run the generic IMAP live tests against a throwaway server, without an account, and in GitHub Actions on every push. A default Dovecot adds little over a real Dovecot account; the value is in server setups that real accounts rarely offer and nothing tests live today: no `UIDPLUS`, no `\Trash` special-use mailbox, `/` as the delimiter without an `INBOX.` prefix, no `MOVE`. Worth building when the filter is used on such servers (for example, after a bug report from one). Needs an `imap_port` setting and handling of the container's self-signed certificate, since the filter always connects with `IMAP4_SSL` on port 993.
 
 ## UID Migration
@@ -120,7 +120,7 @@ Do not assume that behavior which is correct for Gmail is harmless on every othe
 
 Testing has two halves:
 
-- **Unit tests** (`tests/test_mail_filter.py`) check rule matching, configuration checks, and the exact IMAP commands sent, using a fake IMAP connection. They use only the standard library and need no network or credentials.
+- **Unit tests** (`tests/test_imap_mail_filter.py`) check rule matching, configuration checks, and the exact IMAP commands sent, using a fake IMAP connection. They use only the standard library and need no network or credentials.
 - **Live IMAP tests** (`tests/test_live_imap.py`, run with `imap_tests.py`) run the real filter against real servers, to check that each server does what those commands are meant to do.
 
 Between the two, **recorded IMAP replies** (`tests/test_recorded_imap.py`) replay conversations saved from real servers during a live run, offline, as part of the unit tests.
@@ -152,12 +152,12 @@ The Settings → Forwarding and POP/IMAP choice for deleted messages (archive, m
 
 For each account, the tests:
 
-1. create the folders `mail-filter-live-tests/moved` and `mail-filter-live-tests/alt-trash` (with the server's own delimiter and prefix, for example `INBOX.mail-filter-live-tests.moved`), if they do not already exist;
+1. create the folders `imap-mail-filter-live-tests/moved` and `imap-mail-filter-live-tests/alt-trash` (with the server's own delimiter and prefix, for example `INBOX.imap-mail-filter-live-tests.moved`), if they do not already exist;
 2. add unread test messages to `INBOX` with IMAP `APPEND`, one per case, each with its own sender, name, recipient, and subject;
 3. run the filter on just those messages and check each message's log line, where it ended up, its `\Seen` flag, that it is not marked `\Deleted`, and, on Gmail, its labels: move, move with `mark_read`, trash to the server's `\Trash` and to a `trash` mapping, delete, `mark_read` alone, a rule with no action, no matching rule, a missing folder mapping, a missing mailbox, MIME-encoded sender names, a dry run, and a normal run that must ignore test messages;
-4. permanently delete the test messages (on Gmail, through Trash), then delete the `mail-filter-live-tests` folders if they are empty.
+4. permanently delete the test messages (on Gmail, through Trash), then delete the `imap-mail-filter-live-tests` folders if they are empty.
 
-Test messages have a subject starting `[mail-filter testing only]`, an `X-Mail-Filter-Test` header holding the run's ID, and a `Message-ID` ending `@mail-filter.invalid`. The tests change or delete a message only after reading that header, and delete only their own empty `mail-filter-live-tests` folders, so real mail and your other folders are never touched. A normal filter run logs test messages as `IGNORED` and leaves them alone, so a cron run cannot interfere with a test in progress. See [ADR 008](decisions/008-live-imap-tests.md).
+Test messages have a subject starting `[imap-mail-filter testing only]`, an `X-Imap-Mail-Filter-Test` header holding the run's ID, and a `Message-ID` ending `@imap-mail-filter.invalid`. The tests change or delete a message only after reading that header, and delete only their own empty `imap-mail-filter-live-tests` folders, so real mail and your other folders are never touched. A normal filter run logs test messages as `IGNORED` and leaves them alone, so a cron run cannot interfere with a test in progress. See [ADR 008](decisions/008-live-imap-tests.md).
 
 Test messages appear briefly in the tested accounts; a mail client may notify you of them.
 
@@ -206,7 +206,7 @@ python3 imap_tests.py --check-recordings
 `--record` runs the same check at the end. It reads `accounts.local.json5` and reports an `ERROR` for each of these found in `tests/fixtures/imap/*.txt`:
 
 - any account's username, the parts of it before and after the `@`, IMAP host, or account ID (whole words only, ignoring case; `gmail.com` is allowed);
-- any email address outside `example.com`, `example.org`, `example.net`, and `mail-filter.invalid` (the placeholders and test messages);
+- any email address outside `example.com`, `example.org`, `example.net`, and `imap-mail-filter.invalid` (the placeholders and test messages);
 - any `LIST` mailbox name other than `INBOX`, special-use mailboxes, the test folders, and `Folder-N` placeholders.
 
 Do not commit a recording the check rejects. Fix the cause, usually in the scrubbing in `tests/imap_recording.py`, and record again.
@@ -242,7 +242,7 @@ Workflow:
 2. Commit on the branch as often as useful; small commits are still preferred (see [Development Philosophy](#development-philosophy)).
 3. Before merging, run the unit tests. If the change touches IMAP behavior or the log output, also run `python3 imap_tests.py --record` on a Gmail account and a non-Gmail account, then review the updated recordings ([Reviewing a Recording](#reviewing-a-recording)) and commit them. Documentation-only changes need neither.
 4. Merge into `main` with a GitHub pull request or `git merge`, push, and delete the branch.
-5. Update the deployment: `git pull` in `/home/pi/mail-filter`.
+5. Update the deployment: `git pull` in `/home/pi/imap-mail-filter`.
 
 A branch holds one change. Unrelated changes go on separate branches, so each can be tested, merged, and reverted on its own.
 
@@ -298,3 +298,5 @@ pol-
 ```
 
 The current implementation is the result of that evolution and should be treated as the baseline rather than the historical prototypes.
+
+The project was called Mail Filter (`mail-filter`, `mail_filter.py`) until October 2026, when it was renamed IMAP Mail Filter to say what it filters and to be easier to find.

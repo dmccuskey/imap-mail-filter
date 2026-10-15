@@ -1,8 +1,8 @@
-# Mail Filter Architecture
+# IMAP Mail Filter Architecture
 
 ## Overview
 
-Mail Filter is a lightweight, headless IMAP mail filtering engine designed to run continuously on a Raspberry Pi.
+IMAP Mail Filter is a lightweight, headless IMAP mail filtering engine designed to run continuously on a Raspberry Pi.
 
 It replaces GUI-based mail filtering with a deterministic, configuration-driven Python program.
 
@@ -12,7 +12,7 @@ The system:
 2. Selects the account's `INBOX`.
 3. Finds unseen messages.
 4. Fetches each message without changing its read state.
-5. Extracts recipients, sender information, and subject, unfolding folded headers. Messages created by the live IMAP tests (with an `X-Mail-Filter-Test` header) are logged as `IGNORED` and left alone.
+5. Extracts recipients, sender information, and subject, unfolding folded headers. Messages created by the live IMAP tests (with an `X-Imap-Mail-Filter-Test` header) are logged as `IGNORED` and left alone.
 6. Evaluates the configured rules in order.
 7. Applies the first matching rule.
 8. Removes moved or trashed messages from `INBOX`: with `UID MOVE` on Gmail, or by copying them and marking the originals `\Deleted` on other servers.
@@ -38,7 +38,7 @@ The system:
                  │                       │
                  └───────────┬───────────┘
                              ▼
-                       mail_filter.py
+                       imap_mail_filter.py
                              │
                              ▼
                           IMAP

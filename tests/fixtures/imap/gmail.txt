@@ -2,45 +2,45 @@
 # Replayed offline by tests/test_recorded_imap.py. Scrubbed of the username,
 # host, account ID, and personal mailbox names; review before committing.
 {'server': 'gmail',
- 'recorded': '2026-09-25',
+ 'recorded': '2026-10-14',
  'batches': [{'batch': 'a',
-              'test_run_id': 'mft202609252151031fa757xa',
+              'test_run_id': 'mft20261014183209ea34aexa',
               'dry_run': False,
-              'folders': {'moved': 'mail-filter-live-tests/moved',
-                          'missing': 'mail-filter-live-tests/does-not-exist'},
+              'folders': {'moved': 'imap-mail-filter-live-tests/moved',
+                          'missing': 'imap-mail-filter-live-tests/does-not-exist'},
               'rules': {'rules': [{'name': 'move',
-                                   'match': {'subject_contains': 'mft202609252151031fa757xa move '},
+                                   'match': {'subject_contains': 'mft20261014183209ea34aexa move '},
                                    'do': {'move': 'moved'}},
                                   {'name': 'moveread',
-                                   'match': {'subject_contains': 'mft202609252151031fa757xa '
+                                   'match': {'subject_contains': 'mft20261014183209ea34aexa '
                                                                  'moveread '},
                                    'do': {'move': 'moved', 'mark_read': True}},
                                   {'name': 'trash',
-                                   'match': {'subject_contains': 'mft202609252151031fa757xa '
+                                   'match': {'subject_contains': 'mft20261014183209ea34aexa '
                                                                  'trash '},
                                    'do': {'trash': True}},
                                   {'name': 'delete',
-                                   'match': {'subject_contains': 'mft202609252151031fa757xa '
+                                   'match': {'subject_contains': 'mft20261014183209ea34aexa '
                                                                  'delete '},
                                    'do': {'delete': True}},
                                   {'name': 'markread',
-                                   'match': {'subject_contains': 'mft202609252151031fa757xa '
+                                   'match': {'subject_contains': 'mft20261014183209ea34aexa '
                                                                  'markread '},
                                    'do': {'mark_read': True}},
                                   {'name': 'noaction',
-                                   'match': {'subject_contains': 'mft202609252151031fa757xa '
+                                   'match': {'subject_contains': 'mft20261014183209ea34aexa '
                                                                  'noaction '},
                                    'do': {}},
                                   {'name': 'nomapping',
-                                   'match': {'subject_contains': 'mft202609252151031fa757xa '
+                                   'match': {'subject_contains': 'mft20261014183209ea34aexa '
                                                                  'nomapping '},
                                    'do': {'move': 'unmapped'}},
                                   {'name': 'nofolder',
-                                   'match': {'subject_contains': 'mft202609252151031fa757xa '
+                                   'match': {'subject_contains': 'mft20261014183209ea34aexa '
                                                                  'nofolder '},
                                    'do': {'move': 'missing'}},
                                   {'name': 'headers',
-                                   'match': {'subject_contains': 'mft202609252151031fa757xa '
+                                   'match': {'subject_contains': 'mft20261014183209ea34aexa '
                                                                  'headers ',
                                              'to_local_is': 'mf-live-headers',
                                              'from_name_is': 'Zoë Tester',
@@ -48,38 +48,38 @@
                                    'do': {'mark_read': True}}]},
               'log': ['[test] Connecting to imap.example.com as user@example.com',
                       '[test] Gmail IMAP extensions detected (X-GM-EXT-1)',
-                      "[test] Warning: folder 'mail-filter-live-tests/does-not-exist' (key "
+                      "[test] Warning: folder 'imap-mail-filter-live-tests/does-not-exist' (key "
                       "'missing') not found or not selectable (status=NO)",
                       '[test] Found 10 unseen messages',
-                      "[test] MATCHED #67 RULE='move' SUBJECT='[mail-filter testing only] "
-                      "mft202609252151031fa757 mft202609252151031fa757xa move live test' → "
-                      'mail-filter-live-tests/moved',
-                      "[test] MATCHED #68 RULE='moveread' SUBJECT='[mail-filter testing only] "
-                      "mft202609252151031fa757 mft202609252151031fa757xa moveread live test' → "
-                      'mail-filter-live-tests/moved (mark_read)',
+                      "[test] MATCHED #97 RULE='move' SUBJECT='[imap-mail-filter testing only] "
+                      "mft20261014183209ea34ae mft20261014183209ea34aexa move live test' → "
+                      'imap-mail-filter-live-tests/moved',
+                      "[test] MATCHED #98 RULE='moveread' SUBJECT='[imap-mail-filter testing only] "
+                      "mft20261014183209ea34ae mft20261014183209ea34aexa moveread live test' → "
+                      'imap-mail-filter-live-tests/moved (mark_read)',
                       "[test] Trash mailbox: '[Gmail]/Trash' (server \\Trash)",
-                      "[test] MATCHED #69 RULE='trash' SUBJECT='[mail-filter testing only] "
-                      "mft202609252151031fa757 mft202609252151031fa757xa trash live test' → Trash "
+                      "[test] MATCHED #99 RULE='trash' SUBJECT='[imap-mail-filter testing only] "
+                      "mft20261014183209ea34ae mft20261014183209ea34aexa trash live test' → Trash "
                       '([Gmail]/Trash)',
-                      "[test] MATCHED #70 RULE='delete' SUBJECT='[mail-filter testing only] "
-                      "mft202609252151031fa757 mft202609252151031fa757xa delete live test' DELETED",
-                      "[test] MATCHED #71 RULE='markread' SUBJECT='[mail-filter testing only] "
-                      "mft202609252151031fa757 mft202609252151031fa757xa markread live test' "
+                      "[test] MATCHED #100 RULE='delete' SUBJECT='[imap-mail-filter testing only] "
+                      "mft20261014183209ea34ae mft20261014183209ea34aexa delete live test' DELETED",
+                      "[test] MATCHED #101 RULE='markread' SUBJECT='[imap-mail-filter testing "
+                      "only] mft20261014183209ea34ae mft20261014183209ea34aexa markread live test' "
                       'MARKED_READ',
-                      "[test] MATCHED #72 RULE='noaction' SUBJECT='[mail-filter testing only] "
-                      "mft202609252151031fa757 mft202609252151031fa757xa noaction live test' "
+                      "[test] MATCHED #102 RULE='noaction' SUBJECT='[imap-mail-filter testing "
+                      "only] mft20261014183209ea34ae mft20261014183209ea34aexa noaction live test' "
                       'NO_ACTION',
-                      "[test] NO_RULE #73 SUBJECT='[mail-filter testing only] "
-                      "mft202609252151031fa757 mft202609252151031fa757xa norule live test'",
-                      "[test] MATCHED #74 RULE='nomapping' SUBJECT='[mail-filter testing only] "
-                      "mft202609252151031fa757 mft202609252151031fa757xa nomapping live test' "
-                      "SKIPPED: no folder mapping for key 'unmapped'",
-                      "[test] MATCHED #75 RULE='nofolder' SUBJECT='[mail-filter testing only] "
-                      "mft202609252151031fa757 mft202609252151031fa757xa nofolder live test' "
-                      "FAILED: move to 'mail-filter-live-tests/does-not-exist' refused "
+                      "[test] NO_RULE #103 SUBJECT='[imap-mail-filter testing only] "
+                      "mft20261014183209ea34ae mft20261014183209ea34aexa norule live test'",
+                      "[test] MATCHED #104 RULE='nomapping' SUBJECT='[imap-mail-filter testing "
+                      'only] mft20261014183209ea34ae mft20261014183209ea34aexa nomapping live '
+                      "test' SKIPPED: no folder mapping for key 'unmapped'",
+                      "[test] MATCHED #105 RULE='nofolder' SUBJECT='[imap-mail-filter testing "
+                      "only] mft20261014183209ea34ae mft20261014183209ea34aexa nofolder live test' "
+                      "FAILED: move to 'imap-mail-filter-live-tests/does-not-exist' refused "
                       '(status=NO); left in INBOX',
-                      "[test] MATCHED #76 RULE='headers' SUBJECT='[mail-filter testing only] "
-                      "mft202609252151031fa757 mft202609252151031fa757xa headers live test' "
+                      "[test] MATCHED #106 RULE='headers' SUBJECT='[imap-mail-filter testing only] "
+                      "mft20261014183209ea34ae mft20261014183209ea34aexa headers live test' "
                       'MARKED_READ',
                       '[test] Done'],
               'exchanges': [('capability',
@@ -93,67 +93,69 @@
                                b'XT-1 UIDPLUS COMPRESS=DEFLATE ENABLE MOVE CONDSTORE ESEARCH UTF8'
                                b'=ACCEPT LIST-EXTENDED LIST-STATUS LITERAL- SPECIAL-USE APPENDLIM'
                                b'IT=35651584'])),
-                            ('select', ('"mail-filter-live-tests/moved"', True), ('OK', [b'0'])),
                             ('select',
-                             ('"mail-filter-live-tests/does-not-exist"', True),
+                             ('"imap-mail-filter-live-tests/moved"', True),
+                             ('OK', [b'0'])),
+                            ('select',
+                             ('"imap-mail-filter-live-tests/does-not-exist"', True),
                              ('NO',
-                              [b'[NONEXISTENT] Unknown Mailbox: mail-filter-live-tests/does-not-e'
-                               b'xist (now in authenticated state) (Failure)'])),
+                              [b'[NONEXISTENT] Unknown Mailbox: imap-mail-filter-live-tests/does-'
+                               b'not-exist (now in authenticated state) (Failure)'])),
                             ('select', ('INBOX', False), ('OK', [b'16'])),
                             ('select', ('INBOX', False), ('OK', [b'16'])),
                             ('uid',
-                             ('SEARCH', 'UNSEEN', 'SUBJECT', '"mft202609252151031fa757xa"'),
-                             ('OK', [b'67 68 69 70 71 72 73 74 75 76'])),
+                             ('SEARCH', 'UNSEEN', 'SUBJECT', '"mft20261014183209ea34aexa"'),
+                             ('OK', [b'97 98 99 100 101 102 103 104 105 106'])),
                             ('uid',
-                             ('FETCH', b'67', '(BODY.PEEK[])'),
+                             ('FETCH', b'97', '(BODY.PEEK[])'),
                              ('OK',
-                              [(b'7 (UID 67 BODY[] {508}',
-                                b'From: mail-filter live test <live-test@example.org>\r\nTo: liv'
-                                b'e-test@example.org\r\nSubject: [mail-filter testing only] mft2'
-                                b'02609252151031fa757\r\n mft202609252151031fa757xa move live te'
-                                b'st\r\nDate: Fri, 25 Sep 2026 21:51:08 -0600\r\nMessage-ID: <mft2'
-                                b'02609252151031fa757xa.move@mail-filter.invalid>\r\nX-Mail-Filt'
-                                b'er-Test: mft202609252151031fa757xa\r\nContent-Type: text/plain'
-                                b'; charset="utf-8"\r\nContent-Transfer-Encoding: 7bit\r\nMIME-Ver'
-                                b"sion: 1.0\r\n\r\nCreated by mail-filter's live IMAP tests (imap_"
-                                b'tests.py); safe to delete.\r\n'),
+                              [(b'7 (UID 97 BODY[] {533}',
+                                b'From: imap-mail-filter live test <live-test@example.org>\r\nTo'
+                                b': live-test@example.org\r\nSubject: [imap-mail-filter testing '
+                                b'only] mft20261014183209ea34ae\r\n mft20261014183209ea34aexa mo'
+                                b've live test\r\nDate: Wed, 14 Oct 2026 18:32:18 -0600\r\nMessage'
+                                b'-ID: <mft20261014183209ea34aexa.move@imap-mail-filter.invali'
+                                b'd>\r\nX-Imap-Mail-Filter-Test: mft20261014183209ea34aexa\r\nCont'
+                                b'ent-Type: text/plain; charset="utf-8"\r\nContent-Transfer-Enco'
+                                b'ding: 7bit\r\nMIME-Version: 1.0\r\n\r\nCreated by imap-mail-fi'
+                                b"lter's live IMAP tests (imap_tests.py); safe to delete.\r\n"),
                                b')'])),
                             ('uid',
-                             ('MOVE', b'67', '"mail-filter-live-tests/moved"'),
+                             ('MOVE', b'97', '"imap-mail-filter-live-tests/moved"'),
                              ('OK', [None])),
                             ('uid',
-                             ('FETCH', b'68', '(BODY.PEEK[])'),
+                             ('FETCH', b'98', '(BODY.PEEK[])'),
                              ('OK',
-                              [(b'7 (UID 68 BODY[] {516}',
-                                b'From: mail-filter live test <live-test@example.org>\r\nTo: liv'
-                                b'e-test@example.org\r\nSubject: [mail-filter testing only] mft2'
-                                b'02609252151031fa757\r\n mft202609252151031fa757xa moveread liv'
-                                b'e test\r\nDate: Fri, 25 Sep 2026 21:51:08 -0600\r\nMessage-ID: <'
-                                b'mft202609252151031fa757xa.moveread@mail-filter.invalid>\r\nX-M'
-                                b'ail-Filter-Test: mft202609252151031fa757xa\r\nContent-Type: te'
-                                b'xt/plain; charset="utf-8"\r\nContent-Transfer-Encoding: 7bit\r\n'
-                                b"MIME-Version: 1.0\r\n\r\nCreated by mail-filter's live IMAP test"
-                                b's (imap_tests.py); safe to delete.\r\n'),
+                              [(b'7 (UID 98 BODY[] {541}',
+                                b'From: imap-mail-filter live test <live-test@example.org>\r\nTo'
+                                b': live-test@example.org\r\nSubject: [imap-mail-filter testing '
+                                b'only] mft20261014183209ea34ae\r\n mft20261014183209ea34aexa mo'
+                                b'veread live test\r\nDate: Wed, 14 Oct 2026 18:32:19 -0600\r\nMes'
+                                b'sage-ID: <mft20261014183209ea34aexa.moveread@imap-mail-filter.in'
+                                b'valid>\r\nX-Imap-Mail-Filter-Test: mft20261014183209ea34aexa\r\n'
+                                b'Content-Type: text/plain; charset="utf-8"\r\nContent-Transfer-'
+                                b'Encoding: 7bit\r\nMIME-Version: 1.0\r\n\r\nCreated by imap-mai'
+                                b"l-filter's live IMAP tests (imap_tests.py); safe to delete.\r\n"),
                                b')'])),
                             ('uid',
-                             ('STORE', b'68', '+FLAGS', '(\\Seen)'),
-                             ('OK', [b'7 (FLAGS (\\Seen) UID 68)', b'7 (UID 68 FLAGS (\\Seen))'])),
+                             ('STORE', b'98', '+FLAGS', '(\\Seen)'),
+                             ('OK', [b'7 (FLAGS (\\Seen) UID 98)', b'7 (UID 98 FLAGS (\\Seen))'])),
                             ('uid',
-                             ('MOVE', b'68', '"mail-filter-live-tests/moved"'),
+                             ('MOVE', b'98', '"imap-mail-filter-live-tests/moved"'),
                              ('OK', [None])),
                             ('uid',
-                             ('FETCH', b'69', '(BODY.PEEK[])'),
+                             ('FETCH', b'99', '(BODY.PEEK[])'),
                              ('OK',
-                              [(b'7 (UID 69 BODY[] {510}',
-                                b'From: mail-filter live test <live-test@example.org>\r\nTo: liv'
-                                b'e-test@example.org\r\nSubject: [mail-filter testing only] mft2'
-                                b'02609252151031fa757\r\n mft202609252151031fa757xa trash live t'
-                                b'est\r\nDate: Fri, 25 Sep 2026 21:51:09 -0600\r\nMessage-ID: <mft'
-                                b'202609252151031fa757xa.trash@mail-filter.invalid>\r\nX-Mail-Fi'
-                                b'lter-Test: mft202609252151031fa757xa\r\nContent-Type: text/pla'
-                                b'in; charset="utf-8"\r\nContent-Transfer-Encoding: 7bit\r\nMIME-V'
-                                b"ersion: 1.0\r\n\r\nCreated by mail-filter's live IMAP tests (ima"
-                                b'p_tests.py); safe to delete.\r\n'),
+                              [(b'7 (UID 99 BODY[] {535}',
+                                b'From: imap-mail-filter live test <live-test@example.org>\r\nTo'
+                                b': live-test@example.org\r\nSubject: [imap-mail-filter testing '
+                                b'only] mft20261014183209ea34ae\r\n mft20261014183209ea34aexa tr'
+                                b'ash live test\r\nDate: Wed, 14 Oct 2026 18:32:21 -0600\r\nMessag'
+                                b'e-ID: <mft20261014183209ea34aexa.trash@imap-mail-filter.invalid>'
+                                b'\r\nX-Imap-Mail-Filter-Test: mft20261014183209ea34aexa\r\nConten'
+                                b't-Type: text/plain; charset="utf-8"\r\nContent-Transfer-Encodi'
+                                b'ng: 7bit\r\nMIME-Version: 1.0\r\n\r\nCreated by imap-mail-filt'
+                                b"er's live IMAP tests (imap_tests.py); safe to delete.\r\n"),
                                b')'])),
                             ('list',
                              ('""', '*'),
@@ -167,139 +169,142 @@
                                b'(\\HasNoChildren \\Junk) "/" "[Gmail]/Spam"',
                                b'(\\Flagged \\HasNoChildren) "/" "[Gmail]/Starred"',
                                b'(\\HasNoChildren \\Trash) "/" "[Gmail]/Trash"',
-                               b'(\\HasChildren) "/" "mail-filter-live-tests"',
-                               b'(\\HasNoChildren) "/" "mail-filter-live-tests/alt-trash"',
-                               b'(\\HasNoChildren) "/" "mail-filter-live-tests/moved"'])),
-                            ('uid', ('MOVE', b'69', '"[Gmail]/Trash"'), ('OK', [None])),
+                               b'(\\HasChildren) "/" "imap-mail-filter-live-tests"',
+                               b'(\\HasNoChildren) "/" "imap-mail-filter-live-tests/alt-trash"',
+                               b'(\\HasNoChildren) "/" "imap-mail-filter-live-tests/moved"'])),
+                            ('uid', ('MOVE', b'99', '"[Gmail]/Trash"'), ('OK', [None])),
                             ('uid',
-                             ('FETCH', b'70', '(BODY.PEEK[])'),
+                             ('FETCH', b'100', '(BODY.PEEK[])'),
                              ('OK',
-                              [(b'7 (UID 70 BODY[] {512}',
-                                b'From: mail-filter live test <live-test@example.org>\r\nTo: liv'
-                                b'e-test@example.org\r\nSubject: [mail-filter testing only] mft2'
-                                b'02609252151031fa757\r\n mft202609252151031fa757xa delete live '
-                                b'test\r\nDate: Fri, 25 Sep 2026 21:51:10 -0600\r\nMessage-ID: <mf'
-                                b't202609252151031fa757xa.delete@mail-filter.invalid>\r\nX-Mail-'
-                                b'Filter-Test: mft202609252151031fa757xa\r\nContent-Type: text/p'
-                                b'lain; charset="utf-8"\r\nContent-Transfer-Encoding: 7bit\r\nMIME'
-                                b"-Version: 1.0\r\n\r\nCreated by mail-filter's live IMAP tests (i"
-                                b'map_tests.py); safe to delete.\r\n'),
+                              [(b'7 (UID 100 BODY[] {537}',
+                                b'From: imap-mail-filter live test <live-test@example.org>\r\nTo'
+                                b': live-test@example.org\r\nSubject: [imap-mail-filter testing '
+                                b'only] mft20261014183209ea34ae\r\n mft20261014183209ea34aexa de'
+                                b'lete live test\r\nDate: Wed, 14 Oct 2026 18:32:22 -0600\r\nMessa'
+                                b'ge-ID: <mft20261014183209ea34aexa.delete@imap-mail-filter.invali'
+                                b'd>\r\nX-Imap-Mail-Filter-Test: mft20261014183209ea34aexa\r\nCont'
+                                b'ent-Type: text/plain; charset="utf-8"\r\nContent-Transfer-Enco'
+                                b'ding: 7bit\r\nMIME-Version: 1.0\r\n\r\nCreated by imap-mail-fi'
+                                b"lter's live IMAP tests (imap_tests.py); safe to delete.\r\n"),
                                b')'])),
                             ('uid',
-                             ('STORE', b'70', '+FLAGS', '(\\Deleted)'),
-                             ('OK', [b'7 (FLAGS (\\Deleted) UID 70)'])),
+                             ('STORE', b'100', '+FLAGS', '(\\Deleted)'),
+                             ('OK', [b'7 (FLAGS (\\Deleted) UID 100)'])),
                             ('uid',
-                             ('FETCH', b'71', '(BODY.PEEK[])'),
+                             ('FETCH', b'101', '(BODY.PEEK[])'),
                              ('OK',
-                              [(b'7 (UID 71 BODY[] {516}',
-                                b'From: mail-filter live test <live-test@example.org>\r\nTo: liv'
-                                b'e-test@example.org\r\nSubject: [mail-filter testing only] mft2'
-                                b'02609252151031fa757\r\n mft202609252151031fa757xa markread liv'
-                                b'e test\r\nDate: Fri, 25 Sep 2026 21:51:11 -0600\r\nMessage-ID: <'
-                                b'mft202609252151031fa757xa.markread@mail-filter.invalid>\r\nX-M'
-                                b'ail-Filter-Test: mft202609252151031fa757xa\r\nContent-Type: te'
-                                b'xt/plain; charset="utf-8"\r\nContent-Transfer-Encoding: 7bit\r\n'
-                                b"MIME-Version: 1.0\r\n\r\nCreated by mail-filter's live IMAP test"
-                                b's (imap_tests.py); safe to delete.\r\n'),
+                              [(b'7 (UID 101 BODY[] {541}',
+                                b'From: imap-mail-filter live test <live-test@example.org>\r\nTo'
+                                b': live-test@example.org\r\nSubject: [imap-mail-filter testing '
+                                b'only] mft20261014183209ea34ae\r\n mft20261014183209ea34aexa ma'
+                                b'rkread live test\r\nDate: Wed, 14 Oct 2026 18:32:24 -0600\r\nMes'
+                                b'sage-ID: <mft20261014183209ea34aexa.markread@imap-mail-filter.in'
+                                b'valid>\r\nX-Imap-Mail-Filter-Test: mft20261014183209ea34aexa\r\n'
+                                b'Content-Type: text/plain; charset="utf-8"\r\nContent-Transfer-'
+                                b'Encoding: 7bit\r\nMIME-Version: 1.0\r\n\r\nCreated by imap-mai'
+                                b"l-filter's live IMAP tests (imap_tests.py); safe to delete.\r\n"),
                                b')'])),
                             ('uid',
-                             ('STORE', b'71', '+FLAGS', '(\\Seen)'),
-                             ('OK', [b'7 (FLAGS (\\Seen) UID 71)', b'7 (UID 71 FLAGS (\\Seen))'])),
-                            ('uid',
-                             ('FETCH', b'72', '(BODY.PEEK[])'),
+                             ('STORE', b'101', '+FLAGS', '(\\Seen)'),
                              ('OK',
-                              [(b'8 (UID 72 BODY[] {516}',
-                                b'From: mail-filter live test <live-test@example.org>\r\nTo: liv'
-                                b'e-test@example.org\r\nSubject: [mail-filter testing only] mft2'
-                                b'02609252151031fa757\r\n mft202609252151031fa757xa noaction liv'
-                                b'e test\r\nDate: Fri, 25 Sep 2026 21:51:12 -0600\r\nMessage-ID: <'
-                                b'mft202609252151031fa757xa.noaction@mail-filter.invalid>\r\nX-M'
-                                b'ail-Filter-Test: mft202609252151031fa757xa\r\nContent-Type: te'
-                                b'xt/plain; charset="utf-8"\r\nContent-Transfer-Encoding: 7bit\r\n'
-                                b"MIME-Version: 1.0\r\n\r\nCreated by mail-filter's live IMAP test"
-                                b's (imap_tests.py); safe to delete.\r\n'),
+                              [b'7 (FLAGS (\\Seen) UID 101)', b'7 (UID 101 FLAGS (\\Seen))'])),
+                            ('uid',
+                             ('FETCH', b'102', '(BODY.PEEK[])'),
+                             ('OK',
+                              [(b'8 (UID 102 BODY[] {541}',
+                                b'From: imap-mail-filter live test <live-test@example.org>\r\nTo'
+                                b': live-test@example.org\r\nSubject: [imap-mail-filter testing '
+                                b'only] mft20261014183209ea34ae\r\n mft20261014183209ea34aexa no'
+                                b'action live test\r\nDate: Wed, 14 Oct 2026 18:32:25 -0600\r\nMes'
+                                b'sage-ID: <mft20261014183209ea34aexa.noaction@imap-mail-filter.in'
+                                b'valid>\r\nX-Imap-Mail-Filter-Test: mft20261014183209ea34aexa\r\n'
+                                b'Content-Type: text/plain; charset="utf-8"\r\nContent-Transfer-'
+                                b'Encoding: 7bit\r\nMIME-Version: 1.0\r\n\r\nCreated by imap-mai'
+                                b"l-filter's live IMAP tests (imap_tests.py); safe to delete.\r\n"),
                                b')'])),
                             ('uid',
-                             ('FETCH', b'73', '(BODY.PEEK[])'),
+                             ('FETCH', b'103', '(BODY.PEEK[])'),
                              ('OK',
-                              [(b'9 (UID 73 BODY[] {512}',
-                                b'From: mail-filter live test <live-test@example.org>\r\nTo: liv'
-                                b'e-test@example.org\r\nSubject: [mail-filter testing only] mft2'
-                                b'02609252151031fa757\r\n mft202609252151031fa757xa norule live '
-                                b'test\r\nDate: Fri, 25 Sep 2026 21:51:13 -0600\r\nMessage-ID: <mf'
-                                b't202609252151031fa757xa.norule@mail-filter.invalid>\r\nX-Mail-'
-                                b'Filter-Test: mft202609252151031fa757xa\r\nContent-Type: text/p'
-                                b'lain; charset="utf-8"\r\nContent-Transfer-Encoding: 7bit\r\nMIME'
-                                b"-Version: 1.0\r\n\r\nCreated by mail-filter's live IMAP tests (i"
-                                b'map_tests.py); safe to delete.\r\n'),
+                              [(b'9 (UID 103 BODY[] {537}',
+                                b'From: imap-mail-filter live test <live-test@example.org>\r\nTo'
+                                b': live-test@example.org\r\nSubject: [imap-mail-filter testing '
+                                b'only] mft20261014183209ea34ae\r\n mft20261014183209ea34aexa no'
+                                b'rule live test\r\nDate: Wed, 14 Oct 2026 18:32:26 -0600\r\nMessa'
+                                b'ge-ID: <mft20261014183209ea34aexa.norule@imap-mail-filter.invali'
+                                b'd>\r\nX-Imap-Mail-Filter-Test: mft20261014183209ea34aexa\r\nCont'
+                                b'ent-Type: text/plain; charset="utf-8"\r\nContent-Transfer-Enco'
+                                b'ding: 7bit\r\nMIME-Version: 1.0\r\n\r\nCreated by imap-mail-fi'
+                                b"lter's live IMAP tests (imap_tests.py); safe to delete.\r\n"),
                                b')'])),
                             ('uid',
-                             ('FETCH', b'74', '(BODY.PEEK[])'),
+                             ('FETCH', b'104', '(BODY.PEEK[])'),
                              ('OK',
-                              [(b'10 (UID 74 BODY[] {518}',
-                                b'From: mail-filter live test <live-test@example.org>\r\nTo: liv'
-                                b'e-test@example.org\r\nSubject: [mail-filter testing only] mft2'
-                                b'02609252151031fa757\r\n mft202609252151031fa757xa nomapping li'
-                                b've test\r\nDate: Fri, 25 Sep 2026 21:51:14 -0600\r\nMessage-ID: '
-                                b'<mft202609252151031fa757xa.nomapping@mail-filter.invalid>\r\nX'
-                                b'-Mail-Filter-Test: mft202609252151031fa757xa\r\nContent-Type: '
-                                b'text/plain; charset="utf-8"\r\nContent-Transfer-Encoding: 7bit'
-                                b"\r\nMIME-Version: 1.0\r\n\r\nCreated by mail-filter's live IMA"
-                                b'P tests (imap_tests.py); safe to delete.\r\n'),
+                              [(b'10 (UID 104 BODY[] {543}',
+                                b'From: imap-mail-filter live test <live-test@example.org>\r\nTo'
+                                b': live-test@example.org\r\nSubject: [imap-mail-filter testing '
+                                b'only] mft20261014183209ea34ae\r\n mft20261014183209ea34aexa no'
+                                b'mapping live test\r\nDate: Wed, 14 Oct 2026 18:32:27 -0600\r\nMe'
+                                b'ssage-ID: <mft20261014183209ea34aexa.nomapping@imap-mail-filter.'
+                                b'invalid>\r\nX-Imap-Mail-Filter-Test: mft20261014183209ea34aexa'
+                                b'\r\nContent-Type: text/plain; charset="utf-8"\r\nContent-Transfe'
+                                b'r-Encoding: 7bit\r\nMIME-Version: 1.0\r\n\r\nCreated by imap-m'
+                                b"ail-filter's live IMAP tests (imap_tests.py); safe to delete"
+                                b'.\r\n'),
                                b')'])),
                             ('uid',
-                             ('FETCH', b'75', '(BODY.PEEK[])'),
+                             ('FETCH', b'105', '(BODY.PEEK[])'),
                              ('OK',
-                              [(b'11 (UID 75 BODY[] {516}',
-                                b'From: mail-filter live test <live-test@example.org>\r\nTo: liv'
-                                b'e-test@example.org\r\nSubject: [mail-filter testing only] mft2'
-                                b'02609252151031fa757\r\n mft202609252151031fa757xa nofolder liv'
-                                b'e test\r\nDate: Fri, 25 Sep 2026 21:51:15 -0600\r\nMessage-ID: <'
-                                b'mft202609252151031fa757xa.nofolder@mail-filter.invalid>\r\nX-M'
-                                b'ail-Filter-Test: mft202609252151031fa757xa\r\nContent-Type: te'
-                                b'xt/plain; charset="utf-8"\r\nContent-Transfer-Encoding: 7bit\r\n'
-                                b"MIME-Version: 1.0\r\n\r\nCreated by mail-filter's live IMAP test"
-                                b's (imap_tests.py); safe to delete.\r\n'),
+                              [(b'11 (UID 105 BODY[] {541}',
+                                b'From: imap-mail-filter live test <live-test@example.org>\r\nTo'
+                                b': live-test@example.org\r\nSubject: [imap-mail-filter testing '
+                                b'only] mft20261014183209ea34ae\r\n mft20261014183209ea34aexa no'
+                                b'folder live test\r\nDate: Wed, 14 Oct 2026 18:32:29 -0600\r\nMes'
+                                b'sage-ID: <mft20261014183209ea34aexa.nofolder@imap-mail-filter.in'
+                                b'valid>\r\nX-Imap-Mail-Filter-Test: mft20261014183209ea34aexa\r\n'
+                                b'Content-Type: text/plain; charset="utf-8"\r\nContent-Transfer-'
+                                b'Encoding: 7bit\r\nMIME-Version: 1.0\r\n\r\nCreated by imap-mai'
+                                b"l-filter's live IMAP tests (imap_tests.py); safe to delete.\r\n"),
                                b')'])),
                             ('uid',
-                             ('MOVE', b'75', '"mail-filter-live-tests/does-not-exist"'),
+                             ('MOVE', b'105', '"imap-mail-filter-live-tests/does-not-exist"'),
                              ('NO',
-                              [b'[TRYCREATE] No folder mail-filter-live-tests/does-not-exist (Fai'
-                               b'lure)'])),
+                              [b'[TRYCREATE] No folder imap-mail-filter-live-tests/does-not-exist'
+                               b' (Failure)'])),
                             ('uid',
-                             ('FETCH', b'76', '(BODY.PEEK[])'),
+                             ('FETCH', b'106', '(BODY.PEEK[])'),
                              ('OK',
-                              [(b'12 (UID 76 BODY[] {520}',
+                              [(b'12 (UID 106 BODY[] {540}',
                                 b'From: =?utf-8?q?Zo=C3=AB?= Tester <zoe@example.net>\r\nTo: mf-'
-                                b'live-headers@example.com\r\nSubject: [mail-filter testing only'
-                                b'] mft202609252151031fa757\r\n mft202609252151031fa757xa header'
-                                b's live test\r\nDate: Fri, 25 Sep 2026 21:51:16 -0600\r\nMessage-'
-                                b'ID: <mft202609252151031fa757xa.headers@mail-filter.invalid>\r'
-                                b'\nX-Mail-Filter-Test: mft202609252151031fa757xa\r\nContent-Type'
-                                b': text/plain; charset="utf-8"\r\nContent-Transfer-Encoding: 7b'
-                                b"it\r\nMIME-Version: 1.0\r\n\r\nCreated by mail-filter's live I"
-                                b'MAP tests (imap_tests.py); safe to delete.\r\n'),
+                                b'live-headers@example.com\r\nSubject: [imap-mail-filter testing'
+                                b' only] mft20261014183209ea34ae\r\n mft20261014183209ea34aexa h'
+                                b'eaders live test\r\nDate: Wed, 14 Oct 2026 18:32:30 -0600\r\nMes'
+                                b'sage-ID: <mft20261014183209ea34aexa.headers@imap-mail-filter.inv'
+                                b'alid>\r\nX-Imap-Mail-Filter-Test: mft20261014183209ea34aexa\r\nC'
+                                b'ontent-Type: text/plain; charset="utf-8"\r\nContent-Transfer-E'
+                                b'ncoding: 7bit\r\nMIME-Version: 1.0\r\n\r\nCreated by imap-mail'
+                                b"-filter's live IMAP tests (imap_tests.py); safe to delete.\r\n"),
                                b')'])),
                             ('uid',
-                             ('STORE', b'76', '+FLAGS', '(\\Seen)'),
+                             ('STORE', b'106', '+FLAGS', '(\\Seen)'),
                              ('OK',
-                              [b'12 (FLAGS (\\Seen) UID 76)', b'12 (UID 76 FLAGS (\\Seen))'])),
+                              [b'12 (FLAGS (\\Seen) UID 106)', b'12 (UID 106 FLAGS (\\Seen))'])),
                             ('expunge', (), ('OK', [b'7', b'7', b'7', b'7']))]},
              {'batch': 'b',
-              'test_run_id': 'mft202609252151031fa757xb',
+              'test_run_id': 'mft20261014183209ea34aexb',
               'dry_run': False,
-              'folders': {'trash': 'mail-filter-live-tests/alt-trash'},
+              'folders': {'trash': 'imap-mail-filter-live-tests/alt-trash'},
               'rules': {'rules': [{'name': 'trashmap',
-                                   'match': {'subject_contains': 'mft202609252151031fa757xb '
+                                   'match': {'subject_contains': 'mft20261014183209ea34aexb '
                                                                  'trashmap '},
                                    'do': {'trash': True}}]},
               'log': ['[test] Connecting to imap.example.com as user@example.com',
                       '[test] Gmail IMAP extensions detected (X-GM-EXT-1)',
                       '[test] Found 1 unseen messages',
-                      "[test] Trash mailbox: 'mail-filter-live-tests/alt-trash' (folders config)",
-                      "[test] MATCHED #77 RULE='trashmap' SUBJECT='[mail-filter testing only] "
-                      "mft202609252151031fa757 mft202609252151031fa757xb trashmap live test' → "
-                      'Trash (mail-filter-live-tests/alt-trash)',
+                      "[test] Trash mailbox: 'imap-mail-filter-live-tests/alt-trash' (folders "
+                      'config)',
+                      "[test] MATCHED #107 RULE='trashmap' SUBJECT='[imap-mail-filter testing "
+                      "only] mft20261014183209ea34ae mft20261014183209ea34aexb trashmap live test' "
+                      '→ Trash (imap-mail-filter-live-tests/alt-trash)',
                       '[test] Done'],
               'exchanges': [('capability',
                              (),
@@ -313,60 +318,60 @@
                                b'=ACCEPT LIST-EXTENDED LIST-STATUS LITERAL- SPECIAL-USE APPENDLIM'
                                b'IT=35651584'])),
                             ('select',
-                             ('"mail-filter-live-tests/alt-trash"', True),
+                             ('"imap-mail-filter-live-tests/alt-trash"', True),
                              ('OK', [b'0'])),
                             ('select', ('INBOX', False), ('OK', [b'13'])),
                             ('select', ('INBOX', False), ('OK', [b'13'])),
                             ('uid',
-                             ('SEARCH', 'UNSEEN', 'SUBJECT', '"mft202609252151031fa757xb"'),
-                             ('OK', [b'77'])),
+                             ('SEARCH', 'UNSEEN', 'SUBJECT', '"mft20261014183209ea34aexb"'),
+                             ('OK', [b'107'])),
                             ('uid',
-                             ('FETCH', b'77', '(BODY.PEEK[])'),
+                             ('FETCH', b'107', '(BODY.PEEK[])'),
                              ('OK',
-                              [(b'13 (UID 77 BODY[] {516}',
-                                b'From: mail-filter live test <live-test@example.org>\r\nTo: liv'
-                                b'e-test@example.org\r\nSubject: [mail-filter testing only] mft2'
-                                b'02609252151031fa757\r\n mft202609252151031fa757xb trashmap liv'
-                                b'e test\r\nDate: Fri, 25 Sep 2026 21:51:49 -0600\r\nMessage-ID: <'
-                                b'mft202609252151031fa757xb.trashmap@mail-filter.invalid>\r\nX-M'
-                                b'ail-Filter-Test: mft202609252151031fa757xb\r\nContent-Type: te'
-                                b'xt/plain; charset="utf-8"\r\nContent-Transfer-Encoding: 7bit\r\n'
-                                b"MIME-Version: 1.0\r\n\r\nCreated by mail-filter's live IMAP test"
-                                b's (imap_tests.py); safe to delete.\r\n'),
+                              [(b'13 (UID 107 BODY[] {541}',
+                                b'From: imap-mail-filter live test <live-test@example.org>\r\nTo'
+                                b': live-test@example.org\r\nSubject: [imap-mail-filter testing '
+                                b'only] mft20261014183209ea34ae\r\n mft20261014183209ea34aexb tr'
+                                b'ashmap live test\r\nDate: Wed, 14 Oct 2026 18:33:01 -0600\r\nMes'
+                                b'sage-ID: <mft20261014183209ea34aexb.trashmap@imap-mail-filter.in'
+                                b'valid>\r\nX-Imap-Mail-Filter-Test: mft20261014183209ea34aexb\r\n'
+                                b'Content-Type: text/plain; charset="utf-8"\r\nContent-Transfer-'
+                                b'Encoding: 7bit\r\nMIME-Version: 1.0\r\n\r\nCreated by imap-mai'
+                                b"l-filter's live IMAP tests (imap_tests.py); safe to delete.\r\n"),
                                b')'])),
                             ('uid',
-                             ('MOVE', b'77', '"mail-filter-live-tests/alt-trash"'),
+                             ('MOVE', b'107', '"imap-mail-filter-live-tests/alt-trash"'),
                              ('OK', [None]))]},
              {'batch': 'c',
-              'test_run_id': 'mft202609252151031fa757xc',
+              'test_run_id': 'mft20261014183209ea34aexc',
               'dry_run': True,
-              'folders': {'moved': 'mail-filter-live-tests/moved'},
+              'folders': {'moved': 'imap-mail-filter-live-tests/moved'},
               'rules': {'rules': [{'name': 'drymove',
-                                   'match': {'subject_contains': 'mft202609252151031fa757xc '
+                                   'match': {'subject_contains': 'mft20261014183209ea34aexc '
                                                                  'drymove '},
                                    'do': {'move': 'moved'}},
                                   {'name': 'drytrash',
-                                   'match': {'subject_contains': 'mft202609252151031fa757xc '
+                                   'match': {'subject_contains': 'mft20261014183209ea34aexc '
                                                                  'drytrash '},
                                    'do': {'trash': True}},
                                   {'name': 'drydelete',
-                                   'match': {'subject_contains': 'mft202609252151031fa757xc '
+                                   'match': {'subject_contains': 'mft20261014183209ea34aexc '
                                                                  'drydelete '},
                                    'do': {'delete': True}}]},
               'log': ['[test] Connecting to imap.example.com as user@example.com',
                       '[test] dry_run is true; no changes will be made on the server',
                       '[test] Gmail IMAP extensions detected (X-GM-EXT-1)',
                       '[test] Found 3 unseen messages',
-                      "[test] MATCHED #78 RULE='drymove' SUBJECT='[mail-filter testing only] "
-                      "mft202609252151031fa757 mft202609252151031fa757xc drymove live test' → "
-                      'mail-filter-live-tests/moved [DRY_RUN]',
+                      "[test] MATCHED #108 RULE='drymove' SUBJECT='[imap-mail-filter testing only] "
+                      "mft20261014183209ea34ae mft20261014183209ea34aexc drymove live test' → "
+                      'imap-mail-filter-live-tests/moved [DRY_RUN]',
                       "[test] Trash mailbox: '[Gmail]/Trash' (server \\Trash)",
-                      "[test] MATCHED #79 RULE='drytrash' SUBJECT='[mail-filter testing only] "
-                      "mft202609252151031fa757 mft202609252151031fa757xc drytrash live test' → "
-                      'Trash ([Gmail]/Trash) [DRY_RUN]',
-                      "[test] MATCHED #80 RULE='drydelete' SUBJECT='[mail-filter testing only] "
-                      "mft202609252151031fa757 mft202609252151031fa757xc drydelete live test' "
-                      'DELETED [DRY_RUN]',
+                      "[test] MATCHED #109 RULE='drytrash' SUBJECT='[imap-mail-filter testing "
+                      "only] mft20261014183209ea34ae mft20261014183209ea34aexc drytrash live test' "
+                      '→ Trash ([Gmail]/Trash) [DRY_RUN]',
+                      "[test] MATCHED #110 RULE='drydelete' SUBJECT='[imap-mail-filter testing "
+                      'only] mft20261014183209ea34ae mft20261014183209ea34aexc drydelete live '
+                      "test' DELETED [DRY_RUN]",
                       '[test] Done'],
               'exchanges': [('capability',
                              (),
@@ -379,39 +384,41 @@
                                b'XT-1 UIDPLUS COMPRESS=DEFLATE ENABLE MOVE CONDSTORE ESEARCH UTF8'
                                b'=ACCEPT LIST-EXTENDED LIST-STATUS LITERAL- SPECIAL-USE APPENDLIM'
                                b'IT=35651584'])),
-                            ('select', ('"mail-filter-live-tests/moved"', True), ('OK', [b'2'])),
+                            ('select',
+                             ('"imap-mail-filter-live-tests/moved"', True),
+                             ('OK', [b'2'])),
                             ('select', ('INBOX', False), ('OK', [b'15'])),
                             ('select', ('INBOX', False), ('OK', [b'15'])),
                             ('uid',
-                             ('SEARCH', 'UNSEEN', 'SUBJECT', '"mft202609252151031fa757xc"'),
-                             ('OK', [b'78 79 80'])),
+                             ('SEARCH', 'UNSEEN', 'SUBJECT', '"mft20261014183209ea34aexc"'),
+                             ('OK', [b'108 109 110'])),
                             ('uid',
-                             ('FETCH', b'78', '(BODY.PEEK[])'),
+                             ('FETCH', b'108', '(BODY.PEEK[])'),
                              ('OK',
-                              [(b'13 (UID 78 BODY[] {514}',
-                                b'From: mail-filter live test <live-test@example.org>\r\nTo: liv'
-                                b'e-test@example.org\r\nSubject: [mail-filter testing only] mft2'
-                                b'02609252151031fa757\r\n mft202609252151031fa757xc drymove live'
-                                b' test\r\nDate: Fri, 25 Sep 2026 21:51:53 -0600\r\nMessage-ID: <m'
-                                b'ft202609252151031fa757xc.drymove@mail-filter.invalid>\r\nX-Mai'
-                                b'l-Filter-Test: mft202609252151031fa757xc\r\nContent-Type: text'
-                                b'/plain; charset="utf-8"\r\nContent-Transfer-Encoding: 7bit\r\nMI'
-                                b"ME-Version: 1.0\r\n\r\nCreated by mail-filter's live IMAP tests "
-                                b'(imap_tests.py); safe to delete.\r\n'),
+                              [(b'13 (UID 108 BODY[] {539}',
+                                b'From: imap-mail-filter live test <live-test@example.org>\r\nTo'
+                                b': live-test@example.org\r\nSubject: [imap-mail-filter testing '
+                                b'only] mft20261014183209ea34ae\r\n mft20261014183209ea34aexc dr'
+                                b'ymove live test\r\nDate: Wed, 14 Oct 2026 18:33:10 -0600\r\nMess'
+                                b'age-ID: <mft20261014183209ea34aexc.drymove@imap-mail-filter.inva'
+                                b'lid>\r\nX-Imap-Mail-Filter-Test: mft20261014183209ea34aexc\r\nCo'
+                                b'ntent-Type: text/plain; charset="utf-8"\r\nContent-Transfer-En'
+                                b'coding: 7bit\r\nMIME-Version: 1.0\r\n\r\nCreated by imap-mail-'
+                                b"filter's live IMAP tests (imap_tests.py); safe to delete.\r\n"),
                                b')'])),
                             ('uid',
-                             ('FETCH', b'79', '(BODY.PEEK[])'),
+                             ('FETCH', b'109', '(BODY.PEEK[])'),
                              ('OK',
-                              [(b'14 (UID 79 BODY[] {516}',
-                                b'From: mail-filter live test <live-test@example.org>\r\nTo: liv'
-                                b'e-test@example.org\r\nSubject: [mail-filter testing only] mft2'
-                                b'02609252151031fa757\r\n mft202609252151031fa757xc drytrash liv'
-                                b'e test\r\nDate: Fri, 25 Sep 2026 21:51:53 -0600\r\nMessage-ID: <'
-                                b'mft202609252151031fa757xc.drytrash@mail-filter.invalid>\r\nX-M'
-                                b'ail-Filter-Test: mft202609252151031fa757xc\r\nContent-Type: te'
-                                b'xt/plain; charset="utf-8"\r\nContent-Transfer-Encoding: 7bit\r\n'
-                                b"MIME-Version: 1.0\r\n\r\nCreated by mail-filter's live IMAP test"
-                                b's (imap_tests.py); safe to delete.\r\n'),
+                              [(b'14 (UID 109 BODY[] {541}',
+                                b'From: imap-mail-filter live test <live-test@example.org>\r\nTo'
+                                b': live-test@example.org\r\nSubject: [imap-mail-filter testing '
+                                b'only] mft20261014183209ea34ae\r\n mft20261014183209ea34aexc dr'
+                                b'ytrash live test\r\nDate: Wed, 14 Oct 2026 18:33:12 -0600\r\nMes'
+                                b'sage-ID: <mft20261014183209ea34aexc.drytrash@imap-mail-filter.in'
+                                b'valid>\r\nX-Imap-Mail-Filter-Test: mft20261014183209ea34aexc\r\n'
+                                b'Content-Type: text/plain; charset="utf-8"\r\nContent-Transfer-'
+                                b'Encoding: 7bit\r\nMIME-Version: 1.0\r\n\r\nCreated by imap-mai'
+                                b"l-filter's live IMAP tests (imap_tests.py); safe to delete.\r\n"),
                                b')'])),
                             ('list',
                              ('""', '*'),
@@ -425,33 +432,34 @@
                                b'(\\HasNoChildren \\Junk) "/" "[Gmail]/Spam"',
                                b'(\\Flagged \\HasNoChildren) "/" "[Gmail]/Starred"',
                                b'(\\HasNoChildren \\Trash) "/" "[Gmail]/Trash"',
-                               b'(\\HasChildren) "/" "mail-filter-live-tests"',
-                               b'(\\HasNoChildren) "/" "mail-filter-live-tests/alt-trash"',
-                               b'(\\HasNoChildren) "/" "mail-filter-live-tests/moved"'])),
+                               b'(\\HasChildren) "/" "imap-mail-filter-live-tests"',
+                               b'(\\HasNoChildren) "/" "imap-mail-filter-live-tests/alt-trash"',
+                               b'(\\HasNoChildren) "/" "imap-mail-filter-live-tests/moved"'])),
                             ('uid',
-                             ('FETCH', b'80', '(BODY.PEEK[])'),
+                             ('FETCH', b'110', '(BODY.PEEK[])'),
                              ('OK',
-                              [(b'15 (UID 80 BODY[] {518}',
-                                b'From: mail-filter live test <live-test@example.org>\r\nTo: liv'
-                                b'e-test@example.org\r\nSubject: [mail-filter testing only] mft2'
-                                b'02609252151031fa757\r\n mft202609252151031fa757xc drydelete li'
-                                b've test\r\nDate: Fri, 25 Sep 2026 21:51:54 -0600\r\nMessage-ID: '
-                                b'<mft202609252151031fa757xc.drydelete@mail-filter.invalid>\r\nX'
-                                b'-Mail-Filter-Test: mft202609252151031fa757xc\r\nContent-Type: '
-                                b'text/plain; charset="utf-8"\r\nContent-Transfer-Encoding: 7bit'
-                                b"\r\nMIME-Version: 1.0\r\n\r\nCreated by mail-filter's live IMA"
-                                b'P tests (imap_tests.py); safe to delete.\r\n'),
+                              [(b'15 (UID 110 BODY[] {543}',
+                                b'From: imap-mail-filter live test <live-test@example.org>\r\nTo'
+                                b': live-test@example.org\r\nSubject: [imap-mail-filter testing '
+                                b'only] mft20261014183209ea34ae\r\n mft20261014183209ea34aexc dr'
+                                b'ydelete live test\r\nDate: Wed, 14 Oct 2026 18:33:13 -0600\r\nMe'
+                                b'ssage-ID: <mft20261014183209ea34aexc.drydelete@imap-mail-filter.'
+                                b'invalid>\r\nX-Imap-Mail-Filter-Test: mft20261014183209ea34aexc'
+                                b'\r\nContent-Type: text/plain; charset="utf-8"\r\nContent-Transfe'
+                                b'r-Encoding: 7bit\r\nMIME-Version: 1.0\r\n\r\nCreated by imap-m'
+                                b"ail-filter's live IMAP tests (imap_tests.py); safe to delete"
+                                b'.\r\n'),
                                b')']))]},
              {'batch': 'd',
               'test_run_id': None,
               'dry_run': False,
-              'folders': {'moved': 'mail-filter-live-tests/moved'},
+              'folders': {'moved': 'imap-mail-filter-live-tests/moved'},
               'rules': {'rules': [], 'catch_all': {'move': 'moved'}},
               'log': ['[test] Connecting to imap.example.com as user@example.com',
                       '[test] Gmail IMAP extensions detected (X-GM-EXT-1)',
                       '[test] Found 1 unseen messages',
-                      "[test] IGNORED #81 SUBJECT='[mail-filter testing only] "
-                      "mft202609252151031fa757 mft202609252151031fa757xd ignored live test'",
+                      "[test] IGNORED #111 SUBJECT='[imap-mail-filter testing only] "
+                      "mft20261014183209ea34ae mft20261014183209ea34aexd ignored live test'",
                       '[test] Done'],
               'exchanges': [('capability',
                              (),
@@ -464,21 +472,23 @@
                                b'XT-1 UIDPLUS COMPRESS=DEFLATE ENABLE MOVE CONDSTORE ESEARCH UTF8'
                                b'=ACCEPT LIST-EXTENDED LIST-STATUS LITERAL- SPECIAL-USE APPENDLIM'
                                b'IT=35651584'])),
-                            ('select', ('"mail-filter-live-tests/moved"', True), ('OK', [b'2'])),
+                            ('select',
+                             ('"imap-mail-filter-live-tests/moved"', True),
+                             ('OK', [b'2'])),
                             ('select', ('INBOX', False), ('OK', [b'16'])),
                             ('select', ('INBOX', False), ('OK', [b'16'])),
-                            ('uid', ('SEARCH', 'UNSEEN'), ('OK', [b'81'])),
+                            ('uid', ('SEARCH', 'UNSEEN'), ('OK', [b'111'])),
                             ('uid',
-                             ('FETCH', b'81', '(BODY.PEEK[])'),
+                             ('FETCH', b'111', '(BODY.PEEK[])'),
                              ('OK',
-                              [(b'16 (UID 81 BODY[] {514}',
-                                b'From: mail-filter live test <live-test@example.org>\r\nTo: liv'
-                                b'e-test@example.org\r\nSubject: [mail-filter testing only] mft2'
-                                b'02609252151031fa757\r\n mft202609252151031fa757xd ignored live'
-                                b' test\r\nDate: Fri, 25 Sep 2026 21:52:00 -0600\r\nMessage-ID: <m'
-                                b'ft202609252151031fa757xd.ignored@mail-filter.invalid>\r\nX-Mai'
-                                b'l-Filter-Test: mft202609252151031fa757xd\r\nContent-Type: text'
-                                b'/plain; charset="utf-8"\r\nContent-Transfer-Encoding: 7bit\r\nMI'
-                                b"ME-Version: 1.0\r\n\r\nCreated by mail-filter's live IMAP tests "
-                                b'(imap_tests.py); safe to delete.\r\n'),
+                              [(b'16 (UID 111 BODY[] {539}',
+                                b'From: imap-mail-filter live test <live-test@example.org>\r\nTo'
+                                b': live-test@example.org\r\nSubject: [imap-mail-filter testing '
+                                b'only] mft20261014183209ea34ae\r\n mft20261014183209ea34aexd ig'
+                                b'nored live test\r\nDate: Wed, 14 Oct 2026 18:33:26 -0600\r\nMess'
+                                b'age-ID: <mft20261014183209ea34aexd.ignored@imap-mail-filter.inva'
+                                b'lid>\r\nX-Imap-Mail-Filter-Test: mft20261014183209ea34aexd\r\nCo'
+                                b'ntent-Type: text/plain; charset="utf-8"\r\nContent-Transfer-En'
+                                b'coding: 7bit\r\nMIME-Version: 1.0\r\n\r\nCreated by imap-mail-'
+                                b"filter's live IMAP tests (imap_tests.py); safe to delete.\r\n"),
                                b')']))]}]}

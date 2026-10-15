@@ -1,4 +1,4 @@
-# Mail Filter Rule Reference
+# IMAP Mail Filter Rule Reference
 
 ## Match Fields: Quick Reference
 

@@ -1,6 +1,6 @@
-# Mail Filter Documentation
+# IMAP Mail Filter Documentation
 
-New to Mail Filter? Start with the [Quick Start](../README.md#quick-start) in the main README.
+New to IMAP Mail Filter? Start with the [Quick Start](../README.md#quick-start) in the main README.
 
 ## Start
 
@@ -22,13 +22,13 @@ New to Mail Filter? Start with the [Quick Start](../README.md#quick-start) in th
 ## Contribute
 
 - [Development](development.md): the current baseline, possible future changes, testing (unit tests, live IMAP tests, recorded replies), and the branch workflow
-- Planned work is tracked in [GitHub issues](https://github.com/dmccuskey/mail-filter/issues)
+- Planned work is tracked in [GitHub issues](https://github.com/dmccuskey/imap-mail-filter/issues)
 
 ## Project Structure
 
 ```text
-mail-filter/
-├── mail_filter.py            # the filter
+imap-mail-filter/
+├── imap_mail_filter.py            # the filter
 ├── list_folders.py           # lists an account's mailboxes
 ├── imap_tests.py             # live IMAP tests
 ├── accounts.example.json5
@@ -51,7 +51,7 @@ mail-filter/
 │   ├── development.md
 │   └── decisions/            # ADRs
 ├── tests/
-│   ├── test_mail_filter.py
+│   ├── test_imap_mail_filter.py
 │   ├── test_live_imap.py
 │   ├── test_recorded_imap.py     # replays recorded server replies
 │   ├── imap_recording.py

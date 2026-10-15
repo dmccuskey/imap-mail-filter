@@ -18,7 +18,7 @@ Make every configuration file an object keyed by account ID, with no wrapper:
 
 The account ID moves from an `"id"` field into the key. Accounts are processed in the key order of `accounts.local.json5`.
 
-Reject the old shapes rather than accept both. Before connecting to any account, `mail_filter.py` checks for a top-level `"accounts"` list or `"folders"` wrapper, logs an error naming the file, processes no mail, and exits with status 1. A `"folders"` key is treated as the old wrapper only when no account uses that ID.
+Reject the old shapes rather than accept both. Before connecting to any account, `imap_mail_filter.py` checks for a top-level `"accounts"` list or `"folders"` wrapper, logs an error naming the file, processes no mail, and exits with status 1. A `"folders"` key is treated as the old wrapper only when no account uses that ID.
 
 ## Consequences
 
