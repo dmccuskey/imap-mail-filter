@@ -1,8 +1,8 @@
-# Mail Filter
+# IMAP Mail Filter
 
 Filter your mail with simple rules. No programming required.
 
-Mail Filter connects to one or more IMAP accounts, checks each unread message in the inbox against rules you write in a small config file, and moves, trashes, deletes, or marks it read. It runs on a schedule on any machine with Python 3: a Raspberry Pi, a Mac, a Linux server, or a Windows PC.
+IMAP Mail Filter connects to one or more IMAP accounts, checks each unread message in the inbox against rules you write in a small config file, and moves, trashes, deletes, or marks it read. It runs on a schedule on any machine with Python 3: a Raspberry Pi, a Mac, a Linux server, or a Windows PC.
 
 ```json5
 {
@@ -34,11 +34,11 @@ You need Python 3.8 or later (`python3 --version`), `git`, and the IMAP login fo
 ### 1. Get the code
 
 ```bash
-git clone https://github.com/dmccuskey/mail-filter.git
-cd mail-filter
+git clone https://github.com/dmccuskey/imap-mail-filter.git
+cd imap-mail-filter
 ```
 
-There is nothing to install: Mail Filter uses only Python's standard library and the JSON5 parser bundled in `vendor/`.
+There is nothing to install: IMAP Mail Filter uses only Python's standard library and the JSON5 parser bundled in `vendor/`.
 
 ### 2. Add your account
 
@@ -61,7 +61,7 @@ Create `accounts.local.json5` with your account:
 
 The `.local.json5` files are ignored by Git, so your password stays out of the repository. Keep the file private with `chmod 600 accounts.local.json5`.
 
-**App passwords.** Many providers don't accept your normal password from a program like this; instead you create an *app password* in your account's security settings and use that. Gmail (requires 2-Step Verification), iCloud ("app-specific password"), Yahoo, AOL, and Zoho require one; Fastmail recommends one. Proton Mail works only through Proton Mail Bridge. Outlook.com, Hotmail, and Microsoft 365 no longer accept passwords over IMAP at all (they require OAuth), so Mail Filter can't connect to them.
+**App passwords.** Many providers don't accept your normal password from a program like this; instead you create an *app password* in your account's security settings and use that. Gmail (requires 2-Step Verification), iCloud ("app-specific password"), Yahoo, AOL, and Zoho require one; Fastmail recommends one. Proton Mail works only through Proton Mail Bridge. Outlook.com, Hotmail, and Microsoft 365 no longer accept passwords over IMAP at all (they require OAuth), so IMAP Mail Filter can't connect to them.
 
 **Going further:** keep the password out of the file with [`password_env`](docs/configuration.md#password_env), and see [Credentials](docs/operations.md#credentials).
 
@@ -101,7 +101,7 @@ Create `rules.local.json5`:
     "rules": [
       {
         "name": "Hello World",
-        "match": { "subject_contains": "hello mail-filter" },
+        "match": { "subject_contains": "hello imap-mail-filter" },
         "do": { "move": "filtered_key" }
       }
     ]
@@ -109,16 +109,16 @@ Create `rules.local.json5`:
 }
 ```
 
-The rule moves matching messages to the folder with the key `filtered_key`. Matching ignores case, so this matches any subject containing "Hello Mail-Filter".
+The rule moves matching messages to the folder with the key `filtered_key`. Matching ignores case, so this matches any subject containing "Hello IMAP-Mail-Filter".
 
 **Going further:** the [Rule Reference](docs/rule-reference.md) lists every match field and action, how rules combine, and the catch-all.
 
 ### 6. Try it
 
-Send yourself a message with the subject `Hello mail-filter`, and leave it unread: Mail Filter only looks at unread messages in the inbox. Then run:
+Send yourself a message with the subject `Hello imap-mail-filter`, and leave it unread: IMAP Mail Filter only looks at unread messages in the inbox. Then run:
 
 ```bash
-python3 mail_filter.py
+python3 imap_mail_filter.py
 ```
 
 ```text
@@ -126,7 +126,7 @@ python3 mail_filter.py
 [2026-09-25 10:12:03] [my-mail] dry_run is true; no changes will be made on the server
 [2026-09-25 10:12:04] [my-mail] Gmail IMAP extensions detected (X-GM-EXT-1)
 [2026-09-25 10:12:04] [my-mail] Found 3 unseen messages
-[2026-09-25 10:12:04] [my-mail] MATCHED #4821 RULE='Hello World' SUBJECT='Hello mail-filter' → My Filtered Folder [DRY_RUN]
+[2026-09-25 10:12:04] [my-mail] MATCHED #4821 RULE='Hello World' SUBJECT='Hello imap-mail-filter' → My Filtered Folder [DRY_RUN]
 [2026-09-25 10:12:04] [my-mail] NO_RULE #4822 SUBJECT='Your order has shipped' [DRY_RUN]
 [2026-09-25 10:12:04] [my-mail] NO_RULE #4823 SUBJECT='Lunch on Friday?' [DRY_RUN]
 [2026-09-25 10:12:05] [my-mail] Done
@@ -145,21 +145,21 @@ When the lines look right, remove `"dry_run": true` from `accounts.local.json5` 
 Find the full paths to use:
 
 ```bash
-pwd              # e.g. /home/you/mail-filter
+pwd              # e.g. /home/you/imap-mail-filter
 which python3    # e.g. /usr/bin/python3
 ```
 
 Run `crontab -e` and add a line that runs the filter every 5 minutes, using those paths:
 
 ```cron
-*/5 * * * * /usr/bin/python3 /home/you/mail-filter/mail_filter.py >> /home/you/mail-filter/mail_filter.log 2>&1
+*/5 * * * * /usr/bin/python3 /home/you/imap-mail-filter/imap_mail_filter.py >> /home/you/imap-mail-filter/imap_mail_filter.log 2>&1
 ```
 
-The filter's output is appended to `mail_filter.log`; check it with `tail mail_filter.log`.
+The filter's output is appended to `imap_mail_filter.log`; check it with `tail imap_mail_filter.log`.
 
 **Going further:** on a Mac, cron can't read folders such as `Documents` without Full Disk Access, and launchd is the native scheduler; on Windows, use Task Scheduler. Both are in [Installation](docs/installation.md). For a long-running setup, see [Log Rotation](docs/operations.md#log-rotation).
 
-To update later, run `git pull` in the `mail-filter` directory. Your `.local.json5` files are not touched.
+To update later, run `git pull` in the `imap-mail-filter` directory. Your `.local.json5` files are not touched.
 
 ## Documentation
 
@@ -168,12 +168,12 @@ To update later, run `git pull` in the `mail-filter` directory. Your `.local.jso
 - [Rule Reference](docs/rule-reference.md): match fields, actions, rule order, and the catch-all
 - [Operations](docs/operations.md): running, dry runs, logs, cron, credentials, and recovery
 
-Everything else, including how Mail Filter works inside and how it is developed and tested, is listed on the [documentation home](docs/README.md).
+Everything else, including how IMAP Mail Filter works inside and how it is developed and tested, is listed on the [documentation home](docs/README.md).
 
 ## How It Compares
 
-- **[imapfilter](https://github.com/lefcha/imapfilter)** is configured with Lua scripts: very flexible, but you are writing a program. Mail Filter's rules are a list of conditions and actions, checked for mistakes before any mail is touched.
-- **Server-side filters** (Sieve, Gmail filters) run on the mail server, but only where the provider supports them, and each provider has its own rule format. Mail Filter works the same way on any IMAP account, and one config covers all your accounts.
+- **[imapfilter](https://github.com/lefcha/imapfilter)** is configured with Lua scripts: very flexible, but you are writing a program. IMAP Mail Filter's rules are a list of conditions and actions, checked for mistakes before any mail is touched.
+- **Server-side filters** (Sieve, Gmail filters) run on the mail server, but only where the provider supports them, and each provider has its own rule format. IMAP Mail Filter works the same way on any IMAP account, and one config covers all your accounts.
 
 ## Safety
 
@@ -181,6 +181,6 @@ This software operates on real email. Set `"dry_run": true` on an account whenev
 
 ## License
 
-Mail Filter is released under the [MIT License](LICENSE).
+IMAP Mail Filter is released under the [MIT License](LICENSE).
 
 It includes [json5](https://github.com/dpranke/pyjson5) (Apache-2.0) in `vendor/json5/`; see [vendor/README.md](vendor/README.md).

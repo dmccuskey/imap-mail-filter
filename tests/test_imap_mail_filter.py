@@ -8,7 +8,7 @@ from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-import mail_filter  # noqa: E402
+import imap_mail_filter  # noqa: E402
 
 
 def raw_message(to="", subject="", from_="sender@example.com", headers=()):
@@ -137,9 +137,9 @@ DELETED = ("+FLAGS", "(\\Deleted)")
 
 def run_account(fake, rules, folders=FOLDERS, dry_run=False):
     account = {**ACCOUNT, "dry_run": True} if dry_run else ACCOUNT
-    with mock.patch.object(mail_filter.imaplib, "IMAP4_SSL", fake), \
+    with mock.patch.object(imap_mail_filter.imaplib, "IMAP4_SSL", fake), \
             redirect_stdout(io.StringIO()) as out:
-        mail_filter.process_account(account, folders, rules)
+        imap_mail_filter.process_account(account, folders, rules)
     return out.getvalue()
 
 
@@ -447,7 +447,7 @@ class FindAdvertisedTrashTests(unittest.TestCase):
     def find(self, entries, status="OK"):
         imap = mock.Mock()
         imap.list = mock.Mock(return_value=(status, entries))
-        return mail_filter.find_advertised_trash(imap)
+        return imap_mail_filter.find_advertised_trash(imap)
 
     def test_gmail_quoted_name(self):
         self.assertEqual(self.find(GMAIL_LIST), ("[Gmail]/Trash", None))
@@ -483,8 +483,8 @@ class FindAdvertisedTrashTests(unittest.TestCase):
     def test_list_failure(self):
         self.assertIsNone(self.find([b"denied"], status="NO")[0])
         imap = mock.Mock()
-        imap.list = mock.Mock(side_effect=mail_filter.imaplib.IMAP4.error("boom"))
-        self.assertIsNone(mail_filter.find_advertised_trash(imap)[0])
+        imap.list = mock.Mock(side_effect=imap_mail_filter.imaplib.IMAP4.error("boom"))
+        self.assertIsNone(imap_mail_filter.find_advertised_trash(imap)[0])
 
     def test_names_that_cannot_be_quoted_safely_are_refused(self):
         for name in (b'Tr"ash', b"Tr\\ash"):
@@ -501,7 +501,7 @@ class ParseListEntryTests(unittest.TestCase):
     """Mailbox names are extracted from LIST data whatever the delimiter."""
 
     def name(self, entry):
-        return mail_filter.parse_list_entry(entry)[1]
+        return imap_mail_filter.parse_list_entry(entry)[1]
 
     def test_slash_delimiter_quoted_name(self):
         self.assertEqual(self.name(b'(\\HasNoChildren) "/" "[Gmail]/Promotions"'),
@@ -529,13 +529,13 @@ class ParseListEntryTests(unittest.TestCase):
                          b"Corbeille")
 
     def test_attributes(self):
-        attrs, _ = mail_filter.parse_list_entry(b'(\\HasNoChildren \\Trash) "." INBOX.Trash')
+        attrs, _ = imap_mail_filter.parse_list_entry(b'(\\HasNoChildren \\Trash) "." INBOX.Trash')
         self.assertEqual(attrs, b"\\HasNoChildren \\Trash")
 
     def test_non_list_entries(self):
         for entry in (None, b"", b")"):
             with self.subTest(entry=entry):
-                self.assertIsNone(mail_filter.parse_list_entry(entry))
+                self.assertIsNone(imap_mail_filter.parse_list_entry(entry))
 
 
 class TrashResolutionTests(unittest.TestCase):
@@ -626,7 +626,7 @@ class ProviderUnknownTests(unittest.TestCase):
 
     def test_capability_exception_skips_move(self):
         fake = FakeIMAP({b"42": raw_message()})
-        fake.capability = mock.Mock(side_effect=mail_filter.imaplib.IMAP4.error("boom"))
+        fake.capability = mock.Mock(side_effect=imap_mail_filter.imaplib.IMAP4.error("boom"))
         run_account(fake, {"rules": [rule(ANY, {"move": "shop"})]})
 
         self.assertEqual(fake.message_calls(), [])
@@ -645,7 +645,7 @@ class DetectGmailTests(unittest.TestCase):
     def detect(self, response=None, error=None):
         imap = mock.Mock()
         imap.capability = mock.Mock(return_value=response, side_effect=error)
-        return mail_filter.detect_gmail(imap)
+        return imap_mail_filter.detect_gmail(imap)
 
     def test_gmail_capability_line(self):
         self.assertIs(self.detect(("OK", [GMAIL_CAPABILITIES])), True)
@@ -660,7 +660,7 @@ class DetectGmailTests(unittest.TestCase):
         self.assertIsNone(self.detect(("NO", [b"denied"])))
         self.assertIsNone(self.detect(("OK", [])))
         self.assertIsNone(self.detect(("OK", [None])))
-        self.assertIsNone(self.detect(error=mail_filter.imaplib.IMAP4.error("boom")))
+        self.assertIsNone(self.detect(error=imap_mail_filter.imaplib.IMAP4.error("boom")))
         self.assertIsNone(self.detect(error=OSError("reset")))
 
 
@@ -825,7 +825,7 @@ class ChooseRuleTests(unittest.TestCase):
 
     def choose(self, rules_cfg, addresses=(), subject="", from_addr="", from_name=""):
         with redirect_stdout(io.StringIO()):
-            return mail_filter.choose_rule(list(addresses), subject, from_addr, from_name, rules_cfg)
+            return imap_mail_filter.choose_rule(list(addresses), subject, from_addr, from_name, rules_cfg)
 
     def test_first_match_wins(self):
         cfg = {"rules": [
@@ -860,7 +860,7 @@ class ChooseRuleTests(unittest.TestCase):
             ("subject_starts_with", "re:", {"subject": "RE: lunch"}, {"subject": "Fwd: RE: lunch"}),
             ("subject_ends_with", "[urgent]", {"subject": "Server down [URGENT]"}, {"subject": "[urgent] server"}),
         ]
-        self.assertEqual({c[0] for c in cases}, set(mail_filter.MATCHERS))
+        self.assertEqual({c[0] for c in cases}, set(imap_mail_filter.MATCHERS))
         for field, value, hit, miss in cases:
             for form in (value, [value]):
                 with self.subTest(field=field, form=form):
@@ -916,7 +916,7 @@ class ChooseRuleTests(unittest.TestCase):
         for field in ("from_contains", "to", "to_prefix", "subject_equals", "subjet_contains"):
             with self.subTest(field=field):
                 cfg = {"rules": [rule({field: "x"}, {"move": "x"}, name="Typo rule")]}
-                with self.assertRaises(mail_filter.RuleConfigError) as ctx:
+                with self.assertRaises(imap_mail_filter.RuleConfigError) as ctx:
                     self.choose(cfg, subject="x")
                 self.assertIn("'Typo rule'", str(ctx.exception))
                 self.assertIn(f"'{field}'", str(ctx.exception))
@@ -971,15 +971,15 @@ class FetchResponseTests(unittest.TestCase):
 
     def test_body_after_unsolicited_flag_update(self):
         data = [b"3 (FLAGS (\\Seen))", (b"1 (UID 7 BODY[] {40}", self.BODY), b")"]
-        self.assertEqual(mail_filter.fetched_body(data), self.BODY)
+        self.assertEqual(imap_mail_filter.fetched_body(data), self.BODY)
 
     def test_body_before_flag_update(self):
         data = [(b"1 (UID 7 BODY[] {40}", self.BODY), b")", b"3 (FLAGS (\\Seen))"]
-        self.assertEqual(mail_filter.fetched_body(data), self.BODY)
+        self.assertEqual(imap_mail_filter.fetched_body(data), self.BODY)
 
     def test_no_body(self):
-        self.assertIsNone(mail_filter.fetched_body([None]))
-        self.assertIsNone(mail_filter.fetched_body([b"3 (FLAGS (\\Seen))"]))
+        self.assertIsNone(imap_mail_filter.fetched_body([None]))
+        self.assertIsNone(imap_mail_filter.fetched_body([b"3 (FLAGS (\\Seen))"]))
 
     def test_process_account_skips_message_without_body(self):
         fake = FakeIMAP({b"1": raw_message(subject="a"), b"2": raw_message(subject="b")})
@@ -1013,7 +1013,7 @@ class FoldedHeaderTests(unittest.TestCase):
 
     def test_folded_encoded_words(self):
         self.assertEqual(
-            mail_filter.decode_mime_header("=?utf-8?q?caf=C3=A9_long?=\r\n =?utf-8?q?_folded?="),
+            imap_mail_filter.decode_mime_header("=?utf-8?q?caf=C3=A9_long?=\r\n =?utf-8?q?_folded?="),
             "café long folded")
 
 
@@ -1041,53 +1041,53 @@ class ToHeaderOnlyTests(unittest.TestCase):
 class ValidateRulesTests(unittest.TestCase):
 
     def test_valid_rules_pass(self):
-        cfg = {"rules": [rule({m: "x" for m in mail_filter.MATCHERS}, {"move": "x"}),
+        cfg = {"rules": [rule({m: "x" for m in imap_mail_filter.MATCHERS}, {"move": "x"}),
                          rule(ANY, {"delete": True}),
                          rule({"subject_contains": ["", "foo"]}, {"move": "x"})]}
-        self.assertEqual(mail_filter.validate_rules(cfg), [])
+        self.assertEqual(imap_mail_filter.validate_rules(cfg), [])
 
     def test_empty_match_rejected(self):
         for match in (None, {}):
             with self.subTest(match=match):
                 cfg = {"rules": [rule(match, {"delete": True}, name="Oops")]}
-                self.assertEqual(mail_filter.validate_rules(cfg), [
+                self.assertEqual(imap_mail_filter.validate_rules(cfg), [
                     "rule #1 'Oops' has an empty match; "
                     "use catch_all to act on every unmatched message",
                 ])
         cfg = {"rules": [{"name": "No match key", "do": {"delete": True}}]}
-        self.assertEqual(len(mail_filter.validate_rules(cfg)), 1)
+        self.assertEqual(len(imap_mail_filter.validate_rules(cfg)), 1)
 
     def test_empty_field_values_rejected(self):
         for values in ([], "", [""], None):
             with self.subTest(values=values):
                 cfg = {"rules": [rule({**ANY, "subject_contains": values}, {"move": "x"})]}
-                self.assertEqual(mail_filter.validate_rules(cfg), [
+                self.assertEqual(imap_mail_filter.validate_rules(cfg), [
                     "rule #1 'r' has no values for match field 'subject_contains'",
                 ])
 
     def test_unknown_and_empty_fields_both_reported(self):
         cfg = {"rules": [rule({"to": "me", "subject_contains": []}, {"move": "x"})]}
-        self.assertEqual(mail_filter.validate_rules(cfg), [
+        self.assertEqual(imap_mail_filter.validate_rules(cfg), [
             "rule #1 'r' uses unknown match field 'to'",
             "rule #1 'r' has no values for match field 'subject_contains'",
         ])
 
     def test_choose_rule_raises_on_empty_match(self):
         cfg = {"rules": [rule({}, {"delete": True}, name="Oops")]}
-        with self.assertRaises(mail_filter.RuleConfigError) as ctx:
-            mail_filter.choose_rule(["me@example.com"], "s", "a@b.c", "", cfg)
+        with self.assertRaises(imap_mail_filter.RuleConfigError) as ctx:
+            imap_mail_filter.choose_rule(["me@example.com"], "s", "a@b.c", "", cfg)
         self.assertIn("'Oops' has an empty match", str(ctx.exception))
 
     def test_catch_all_needs_no_match(self):
         cfg = {"rules": [rule(ANY, {"move": "x"})], "catch_all": {"move": "archive"}}
-        self.assertEqual(mail_filter.validate_rules(cfg), [])
+        self.assertEqual(imap_mail_filter.validate_rules(cfg), [])
         cfg = {"rules": [], "catch_all": {"move": "archive"}}
-        self.assertEqual(mail_filter.choose_rule([], "", "", "", cfg)["name"], "<catch_all>")
+        self.assertEqual(imap_mail_filter.choose_rule([], "", "", "", cfg)["name"], "<catch_all>")
 
     def test_reports_every_unknown_field(self):
         cfg = {"rules": [rule({"subject_contains": "a"}, {"move": "x"}, name="Fine"),
                          rule({"from_contains": "github.com", "to": "me"}, {"move": "x"}, name="GitHub")]}
-        self.assertEqual(mail_filter.validate_rules(cfg), [
+        self.assertEqual(imap_mail_filter.validate_rules(cfg), [
             "rule #2 'GitHub' uses unknown match field 'from_contains'",
             "rule #2 'GitHub' uses unknown match field 'to'",
         ])
@@ -1099,11 +1099,11 @@ class ValidateRulesTests(unittest.TestCase):
             "rules.local.json5": {"test": {"rules": [rule({"to_prefix": "shop-"}, {"move": "shop"})]}},
         }
         connect = mock.Mock(side_effect=AssertionError("connected despite bad rules"))
-        with mock.patch.object(mail_filter, "load_json", lambda path: configs[Path(path).name]), \
-                mock.patch.object(mail_filter.imaplib, "IMAP4_SSL", connect), \
+        with mock.patch.object(imap_mail_filter, "load_json", lambda path: configs[Path(path).name]), \
+                mock.patch.object(imap_mail_filter.imaplib, "IMAP4_SSL", connect), \
                 redirect_stdout(io.StringIO()) as out:
             with self.assertRaises(SystemExit) as ctx:
-                mail_filter.main()
+                imap_mail_filter.main()
         connect.assert_not_called()
         self.assertEqual(ctx.exception.code, 1)
         self.assertIn("] [test] ERROR: rule #1 'r' uses unknown match field 'to_prefix'\n",
@@ -1119,11 +1119,11 @@ class ValidateRulesTests(unittest.TestCase):
             "rules.local.json5": {"test": {"rules": [{"name": "oops", "do": {"delete": True}}]}},
         }
         connect = mock.Mock(side_effect=AssertionError("connected despite bad rules"))
-        with mock.patch.object(mail_filter, "load_json", lambda path: configs[Path(path).name]), \
-                mock.patch.object(mail_filter.imaplib, "IMAP4_SSL", connect), \
+        with mock.patch.object(imap_mail_filter, "load_json", lambda path: configs[Path(path).name]), \
+                mock.patch.object(imap_mail_filter.imaplib, "IMAP4_SSL", connect), \
                 redirect_stdout(io.StringIO()) as out:
             with self.assertRaises(SystemExit) as ctx:
-                mail_filter.main()
+                imap_mail_filter.main()
         connect.assert_not_called()
         self.assertEqual(ctx.exception.code, 1)
         self.assertIn("] [test] ERROR: rule #1 'oops' has an empty match; "
@@ -1139,7 +1139,7 @@ class LoadJsonTests(unittest.TestCase):
     BASE = Path(__file__).resolve().parent.parent
 
     def test_uses_bundled_json5(self):
-        self.assertEqual(Path(mail_filter.json5.__file__).resolve().parent,
+        self.assertEqual(Path(imap_mail_filter.json5.__file__).resolve().parent,
                          self.BASE / "vendor" / "json5")
 
     def test_comments_and_trailing_commas(self):
@@ -1151,13 +1151,13 @@ class LoadJsonTests(unittest.TestCase):
                 '  "test": { "imap_host": "imap.example.com", mail_enabled: false, },\n'
                 "}\n"
             )
-            self.assertEqual(mail_filter.load_json(path),
+            self.assertEqual(imap_mail_filter.load_json(path),
                              {"test": {"imap_host": "imap.example.com", "mail_enabled": False}})
 
     def test_example_files_load(self):
         for name in ("accounts", "folders", "rules"):
             with self.subTest(name=name):
-                self.assertIsInstance(mail_filter.load_json(self.BASE / f"{name}.example.json5"), dict)
+                self.assertIsInstance(imap_mail_filter.load_json(self.BASE / f"{name}.example.json5"), dict)
 
 
 class ConfigFormatTests(unittest.TestCase):
@@ -1172,11 +1172,11 @@ class ConfigFormatTests(unittest.TestCase):
             "rules.local.json5": self.RULES,
         }
         process = mock.Mock()
-        with mock.patch.object(mail_filter, "load_json", lambda path: configs[Path(path).name]), \
-                mock.patch.object(mail_filter, "process_account", process), \
+        with mock.patch.object(imap_mail_filter, "load_json", lambda path: configs[Path(path).name]), \
+                mock.patch.object(imap_mail_filter, "process_account", process), \
                 redirect_stdout(io.StringIO()) as out:
             try:
-                mail_filter.main()
+                imap_mail_filter.main()
                 code = None
             except SystemExit as exc:
                 code = exc.code
@@ -1184,7 +1184,7 @@ class ConfigFormatTests(unittest.TestCase):
 
     def test_valid_config_has_no_problems(self):
         self.assertEqual(
-            mail_filter.validate_config_format({"test": ACCOUNT_CFG}, {"test": FOLDERS}), [])
+            imap_mail_filter.validate_config_format({"test": ACCOUNT_CFG}, {"test": FOLDERS}), [])
 
     def test_accounts_processed_in_file_order_with_id(self):
         accounts = {"b": ACCOUNT_CFG, "a": ACCOUNT_CFG}
@@ -1212,7 +1212,7 @@ class ConfigFormatTests(unittest.TestCase):
                       out)
 
     def test_both_old_formats_reported_together(self):
-        problems = mail_filter.validate_config_format(
+        problems = imap_mail_filter.validate_config_format(
             {"accounts": [ACCOUNT]}, {"folders": {"test": FOLDERS}})
         self.assertEqual(len(problems), 2)
         self.assertTrue(problems[0].startswith("accounts.local.json5 uses the old format"))
@@ -1220,11 +1220,11 @@ class ConfigFormatTests(unittest.TestCase):
 
     def test_account_named_folders_is_allowed(self):
         self.assertEqual(
-            mail_filter.validate_config_format({"folders": ACCOUNT_CFG}, {"folders": FOLDERS}), [])
+            imap_mail_filter.validate_config_format({"folders": ACCOUNT_CFG}, {"folders": FOLDERS}), [])
 
     def test_non_object_account_rejected(self):
         self.assertEqual(
-            mail_filter.validate_config_format({"test": "imap.example.com"}, {}),
+            imap_mail_filter.validate_config_format({"test": "imap.example.com"}, {}),
             ["account 'test' in accounts.local.json5 must be an object"])
 
 
@@ -1243,43 +1243,43 @@ class PasswordTests(unittest.TestCase):
             },
         }
         process = mock.Mock()
-        with mock.patch.object(mail_filter, "load_json", lambda path: configs[Path(path).name]), \
-                mock.patch.object(mail_filter, "process_account", process), \
-                mock.patch.dict(mail_filter.os.environ, environ, clear=True), \
+        with mock.patch.object(imap_mail_filter, "load_json", lambda path: configs[Path(path).name]), \
+                mock.patch.object(imap_mail_filter, "process_account", process), \
+                mock.patch.dict(imap_mail_filter.os.environ, environ, clear=True), \
                 redirect_stdout(io.StringIO()) as out:
             try:
-                mail_filter.main()
+                imap_mail_filter.main()
                 code = None
             except SystemExit as exc:
                 code = exc.code
         return code, out.getvalue(), process
 
     def test_literal_password_is_valid_and_used(self):
-        self.assertEqual(mail_filter.password_problems("test", ACCOUNT_CFG, {}), [])
-        self.assertEqual(mail_filter.account_password(ACCOUNT_CFG, {}), "p")
+        self.assertEqual(imap_mail_filter.password_problems("test", ACCOUNT_CFG, {}), [])
+        self.assertEqual(imap_mail_filter.account_password(ACCOUNT_CFG, {}), "p")
 
     def test_password_env_is_valid_and_read_from_environment(self):
         environ = {"MF_PW": "secret"}
-        self.assertEqual(mail_filter.password_problems("test", self.ENV_CFG, environ), [])
-        self.assertEqual(mail_filter.account_password(self.ENV_CFG, environ), "secret")
+        self.assertEqual(imap_mail_filter.password_problems("test", self.ENV_CFG, environ), [])
+        self.assertEqual(imap_mail_filter.account_password(self.ENV_CFG, environ), "secret")
 
     def test_both_rejected(self):
         cfg = {**ACCOUNT_CFG, "password_env": "MF_PW"}
         self.assertEqual(
-            mail_filter.password_problems("test", cfg, {"MF_PW": "secret"}),
+            imap_mail_filter.password_problems("test", cfg, {"MF_PW": "secret"}),
             ['account \'test\' sets both "password" and "password_env"; use only one'])
 
     def test_neither_rejected(self):
         cfg = {"imap_host": "imap.example.com", "username": "u"}
         self.assertEqual(
-            mail_filter.password_problems("test", cfg, {}),
+            imap_mail_filter.password_problems("test", cfg, {}),
             ['account \'test\' sets neither "password" nor "password_env"'])
 
     def test_unset_or_empty_variable_rejected(self):
         for environ in ({}, {"MF_PW": ""}):
             with self.subTest(environ=environ):
                 self.assertEqual(
-                    mail_filter.password_problems("test", self.ENV_CFG, environ),
+                    imap_mail_filter.password_problems("test", self.ENV_CFG, environ),
                     ["account 'test' reads its password from environment variable "
                      "'MF_PW', which is not set or is empty"])
 
@@ -1287,7 +1287,7 @@ class PasswordTests(unittest.TestCase):
         for var in ("", 5, None):
             with self.subTest(var=var):
                 cfg = {**self.ENV_CFG, "password_env": var}
-                self.assertEqual(len(mail_filter.password_problems("test", cfg, {})), 1)
+                self.assertEqual(len(imap_mail_filter.password_problems("test", cfg, {})), 1)
 
     def test_main_mixes_both_styles(self):
         accounts = {"lit": ACCOUNT_CFG, "env": self.ENV_CFG}
@@ -1314,11 +1314,11 @@ class PasswordTests(unittest.TestCase):
         imap = mock.Mock()
         imap.login.side_effect = RuntimeError("stop after login")
         account = {"id": "test", **self.ENV_CFG}
-        with mock.patch.object(mail_filter.imaplib, "IMAP4_SSL", return_value=imap), \
-                mock.patch.dict(mail_filter.os.environ, {"MF_PW": "secret"}, clear=True), \
+        with mock.patch.object(imap_mail_filter.imaplib, "IMAP4_SSL", return_value=imap), \
+                mock.patch.dict(imap_mail_filter.os.environ, {"MF_PW": "secret"}, clear=True), \
                 redirect_stdout(io.StringIO()):
             with self.assertRaises(RuntimeError):
-                mail_filter.process_account(account, FOLDERS, {"rules": []})
+                imap_mail_filter.process_account(account, FOLDERS, {"rules": []})
         imap.login.assert_called_once_with("u", "secret")
 
 
@@ -1337,12 +1337,12 @@ class MailEnabledTests(unittest.TestCase):
             },
         }
         process = mock.Mock()
-        with mock.patch.object(mail_filter, "load_json", lambda path: configs[Path(path).name]), \
-                mock.patch.object(mail_filter, "process_account", process), \
-                mock.patch.dict(mail_filter.os.environ, environ or {}, clear=True), \
+        with mock.patch.object(imap_mail_filter, "load_json", lambda path: configs[Path(path).name]), \
+                mock.patch.object(imap_mail_filter, "process_account", process), \
+                mock.patch.dict(imap_mail_filter.os.environ, environ or {}, clear=True), \
                 redirect_stdout(io.StringIO()) as out:
             try:
-                mail_filter.main()
+                imap_mail_filter.main()
                 code = None
             except SystemExit as exc:
                 code = exc.code
@@ -1402,9 +1402,9 @@ class DryRunTests(unittest.TestCase):
     DRY_LINE = "[test] dry_run is true; no changes will be made on the server"
 
     def test_default_is_false(self):
-        self.assertFalse(mail_filter.is_dry_run(ACCOUNT_CFG))
-        self.assertFalse(mail_filter.is_dry_run({**ACCOUNT_CFG, "dry_run": False}))
-        self.assertTrue(mail_filter.is_dry_run({**ACCOUNT_CFG, "dry_run": True}))
+        self.assertFalse(imap_mail_filter.is_dry_run(ACCOUNT_CFG))
+        self.assertFalse(imap_mail_filter.is_dry_run({**ACCOUNT_CFG, "dry_run": False}))
+        self.assertTrue(imap_mail_filter.is_dry_run({**ACCOUNT_CFG, "dry_run": True}))
 
     def test_dry_run_account_is_logged(self):
         output = run_account(FakeIMAP({b"42": raw_message()}), self.DELETE, dry_run=True)
@@ -1429,7 +1429,7 @@ class DryRunTests(unittest.TestCase):
         for value in ("true", 1):
             with self.subTest(value=value):
                 self.assertEqual(
-                    mail_filter.validate_config_format(
+                    imap_mail_filter.validate_config_format(
                         {"test": {**ACCOUNT_CFG, "dry_run": value}}, {}),
                     ["account 'test' has an invalid \"dry_run\"; it must be true or false"])
 
@@ -1442,25 +1442,25 @@ class TestMessageTests(unittest.TestCase):
     def messages(self):
         return {
             b"1": raw_message(subject="real mail"),
-            b"2": raw_message(subject="[mail-filter testing only] run1 move",
-                              headers=[("X-Mail-Filter-Test", "run1")]),
-            b"3": raw_message(subject="[mail-filter testing only] run0 move",
-                              headers=[("X-Mail-Filter-Test", "run0")]),
+            b"2": raw_message(subject="[imap-mail-filter testing only] run1 move",
+                              headers=[("X-Imap-Mail-Filter-Test", "run1")]),
+            b"3": raw_message(subject="[imap-mail-filter testing only] run0 move",
+                              headers=[("X-Imap-Mail-Filter-Test", "run0")]),
         }
 
     def run_account(self, test_run_id):
         fake = FakeIMAP(self.messages())
-        with mock.patch.object(mail_filter.imaplib, "IMAP4_SSL", fake), \
+        with mock.patch.object(imap_mail_filter.imaplib, "IMAP4_SSL", fake), \
                 redirect_stdout(io.StringIO()) as out:
-            mail_filter.process_account(ACCOUNT, FOLDERS, self.RULES, test_run_id)
+            imap_mail_filter.process_account(ACCOUNT, FOLDERS, self.RULES, test_run_id)
         return fake, message_lines(out.getvalue())
 
     def test_normal_run_ignores_test_messages(self):
         fake, lines = self.run_account(None)
         self.assertEqual(lines, [
             "[test] MATCHED #1 RULE='<catch_all>' SUBJECT='real mail' → Archive",
-            "[test] IGNORED #2 SUBJECT='[mail-filter testing only] run1 move'",
-            "[test] IGNORED #3 SUBJECT='[mail-filter testing only] run0 move'",
+            "[test] IGNORED #2 SUBJECT='[imap-mail-filter testing only] run1 move'",
+            "[test] IGNORED #3 SUBJECT='[imap-mail-filter testing only] run0 move'",
         ])
         self.assertEqual([c[2] for c in fake.message_calls()], [b"1", b"1"])
         self.assertIn(("UID", "SEARCH", "UNSEEN"), fake.calls)
@@ -1470,9 +1470,9 @@ class TestMessageTests(unittest.TestCase):
         self.assertIn(("UID", "SEARCH", "UNSEEN", "SUBJECT", '"run1"'), fake.calls)
         self.assertEqual(lines, [
             "[test] IGNORED #1 SUBJECT='real mail'",
-            "[test] MATCHED #2 RULE='<catch_all>' SUBJECT='[mail-filter testing only] run1 move'"
+            "[test] MATCHED #2 RULE='<catch_all>' SUBJECT='[imap-mail-filter testing only] run1 move'"
             " → Archive",
-            "[test] IGNORED #3 SUBJECT='[mail-filter testing only] run0 move'",
+            "[test] IGNORED #3 SUBJECT='[imap-mail-filter testing only] run0 move'",
         ])
         self.assertEqual([c[2] for c in fake.message_calls()], [b"2", b"2"])
 
@@ -1481,13 +1481,13 @@ class TestEnabledTests(unittest.TestCase):
     """test_enabled selects the accounts for the live IMAP tests; the filter ignores it."""
 
     def test_default_and_values(self):
-        self.assertTrue(mail_filter.test_enabled(ACCOUNT_CFG))
-        self.assertTrue(mail_filter.test_enabled({**ACCOUNT_CFG, "test_enabled": True}))
-        self.assertFalse(mail_filter.test_enabled({**ACCOUNT_CFG, "test_enabled": False}))
+        self.assertTrue(imap_mail_filter.test_enabled(ACCOUNT_CFG))
+        self.assertTrue(imap_mail_filter.test_enabled({**ACCOUNT_CFG, "test_enabled": True}))
+        self.assertFalse(imap_mail_filter.test_enabled({**ACCOUNT_CFG, "test_enabled": False}))
 
     def test_non_boolean_rejected(self):
         self.assertEqual(
-            mail_filter.validate_config_format(
+            imap_mail_filter.validate_config_format(
                 {"t": {**ACCOUNT_CFG, "test_enabled": "no"}}, {}),
             ["account 't' has an invalid \"test_enabled\"; it must be true or false"])
 

@@ -19,8 +19,8 @@ DEV_LOGS = False
 
 # Messages created by the live IMAP tests (imap_tests.py) carry this header,
 # holding the test run ID, and this marker at the start of the subject.
-TEST_HEADER = "X-Mail-Filter-Test"
-TEST_SUBJECT_MARKER = "[mail-filter testing only]"
+TEST_HEADER = "X-Imap-Mail-Filter-Test"
+TEST_SUBJECT_MARKER = "[imap-mail-filter testing only]"
 
 
 # ---------- Helpers ----------

@@ -16,7 +16,7 @@
   "gmail-personal": {
     "imap_host": "imap.gmail.com",
     "username": "your-address@gmail.com",
-    "password_env": "MAILFILTER_PW_GMAIL_PERSONAL",
+    "password_env": "IMAP_MAIL_FILTER_PW_GMAIL_PERSONAL",
     "mail_enabled": false
   }
 }

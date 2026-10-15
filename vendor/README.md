@@ -1,6 +1,6 @@
 # Bundled Packages
 
-Third-party code bundled with Mail Filter, so it runs on a plain Python 3 install with nothing to `pip install`.
+Third-party code bundled with IMAP Mail Filter, so it runs on a plain Python 3 install with nothing to `pip install`.
 
 ## json5
 
@@ -9,7 +9,7 @@ Third-party code bundled with Mail Filter, so it runs on a plain Python 3 instal
 - **License:** Apache License 2.0, in [json5/LICENSE](json5/LICENSE). Copyright 2015 Google Inc.
 - **Files:** `__init__.py`, `lib.py`, `parser.py`, and `version.py`, copied unmodified. The package's command-line tool (`tool.py`, `host.py`, `__main__.py`) is left out; the parser does not use it.
 
-`mail_filter.py` puts this directory at the front of Python's module search path, so the bundled copy is used even when a `json5` package is installed. `list_folders.py` and the tests load config through `mail_filter.load_json()`.
+`imap_mail_filter.py` puts this directory at the front of Python's module search path, so the bundled copy is used even when a `json5` package is installed. `list_folders.py` and the tests load config through `imap_mail_filter.load_json()`.
 
 ### Updating
 

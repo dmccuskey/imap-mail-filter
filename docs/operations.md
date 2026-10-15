@@ -1,19 +1,19 @@
-# Mail Filter Operations
+# IMAP Mail Filter Operations
 
 ## Running the Filter
 
 The main program is:
 
 ```bash
-python3 mail_filter.py
+python3 imap_mail_filter.py
 ```
 
-The script loads `accounts.local.json5`, `folders.local.json5`, and `rules.local.json5` from the directory containing `mail_filter.py`, regardless of the current working directory.
+The script loads `accounts.local.json5`, `folders.local.json5`, and `rules.local.json5` from the directory containing `imap_mail_filter.py`, regardless of the current working directory.
 
 On the Raspberry Pi deployment, this is:
 
 ```text
-/home/pi/mail-filter
+/home/pi/imap-mail-filter
 ```
 
 ### Startup Rule Check
@@ -81,7 +81,7 @@ The intended deployment model is a cron job that runs the filter periodically.
 Example:
 
 ```cron
-*/5 * * * * /usr/bin/python3 /home/pi/mail-filter/mail_filter.py >> /home/pi/mail-filter/mail_filter.log 2>&1
+*/5 * * * * /usr/bin/python3 /home/pi/imap-mail-filter/imap_mail_filter.py >> /home/pi/imap-mail-filter/imap_mail_filter.log 2>&1
 ```
 
 This causes the filter to run every five minutes.
@@ -99,7 +99,7 @@ The application logs to standard output.
 A cron deployment can redirect that output to:
 
 ```text
-mail_filter.log
+imap_mail_filter.log
 ```
 
 Log entries include timestamps and account/rule context.
@@ -128,7 +128,7 @@ Every processed message produces exactly one line, written after its outcome is 
 ```
 
 - `[...]` is used only for the timestamp and the account ID.
-- `MATCHED` means a rule, or `catch_all` (`RULE='<catch_all>'`), matched. `NO_RULE` means nothing matched and there is no catch-all. `IGNORED` means the message was made by the live IMAP tests (it has an `X-Mail-Filter-Test` header), so no rule was evaluated and the message is unchanged; see [Testing](development.md#testing).
+- `MATCHED` means a rule, or `catch_all` (`RULE='<catch_all>'`), matched. `NO_RULE` means nothing matched and there is no catch-all. `IGNORED` means the message was made by the live IMAP tests (it has an `X-Imap-Mail-Filter-Test` header), so no rule was evaluated and the message is unchanged; see [Testing](development.md#testing).
 - `#uid` is the message's IMAP UID. A UID is unique only within one account's mailbox, so combine it with the account when searching across accounts.
 - `RULE` and `SUBJECT` are printed as-is; quotes inside them are not escaped.
 
@@ -182,13 +182,13 @@ Rule configuration warnings are written as `Warning: RULE='name' ...`.
 Useful searches:
 
 ```bash
-grep MATCHED mail_filter.log              # every match
-grep NO_RULE mail_filter.log              # unmatched messages
-grep IGNORED mail_filter.log              # live-test messages left alone
-grep -E 'FAILED|ERROR' mail_filter.log    # anything that needs attention
-grep 'SKIPPED' mail_filter.log            # matches that could not be acted on
-grep "RULE='GitHub mail'" mail_filter.log # one rule
-grep '#16186 ' mail_filter.log            # one message
+grep MATCHED imap_mail_filter.log              # every match
+grep NO_RULE imap_mail_filter.log              # unmatched messages
+grep IGNORED imap_mail_filter.log              # live-test messages left alone
+grep -E 'FAILED|ERROR' imap_mail_filter.log    # anything that needs attention
+grep 'SKIPPED' imap_mail_filter.log            # matches that could not be acted on
+grep "RULE='GitHub mail'" imap_mail_filter.log # one rule
+grep '#16186 ' imap_mail_filter.log            # one message
 ```
 
 No other line contains the word `MATCHED`.
@@ -200,7 +200,7 @@ The historical deployment configuration uses `logrotate`.
 Example:
 
 ```text
-/home/pi/mail-filter/mail_filter.log {
+/home/pi/imap-mail-filter/imap_mail_filter.log {
     su pi pi
     daily
     rotate 14
@@ -215,15 +215,15 @@ Example:
 This should be installed under:
 
 ```text
-/etc/logrotate.d/mail-filter
+/etc/logrotate.d/imap-mail-filter
 ```
 
 Keep the `su pi pi` line (use your own user and group if not `pi`). It makes
 logrotate rotate the file as the owning user rather than root. It is required
-when `/home/pi/mail-filter` is group- or world-writable (for example, created
+when `/home/pi/imap-mail-filter` is group- or world-writable (for example, created
 under a `umask` of `002`): without it, logrotate silently skips the file with
 "parent directory has insecure permissions". Check with
-`sudo logrotate -d /etc/logrotate.d/mail-filter`.
+`sudo logrotate -d /etc/logrotate.d/imap-mail-filter`.
 
 ## Credentials
 
@@ -236,24 +236,24 @@ Credentials are stored in `accounts.local.json5`, either directly as `password` 
 With `password_env`, keep the variables in a secrets file readable only by the user that runs the filter:
 
 ```bash
-# /home/pi/.config/mail-filter/secrets.env
-export MAILFILTER_PW_GMAIL_PERSONAL='app-password-here'
-export MAILFILTER_PW_AEROSPACE='app-password-here'
+# /home/pi/.config/imap-mail-filter/secrets.env
+export IMAP_MAIL_FILTER_PW_GMAIL_PERSONAL='app-password-here'
+export IMAP_MAIL_FILTER_PW_AEROSPACE='app-password-here'
 ```
 
 ```bash
-chmod 600 /home/pi/.config/mail-filter/secrets.env
+chmod 600 /home/pi/.config/imap-mail-filter/secrets.env
 ```
 
 Cron does not read shell startup files, so source the secrets file in the cron line:
 
 ```cron
-*/5 * * * * . /home/pi/.config/mail-filter/secrets.env && /usr/bin/python3 /home/pi/mail-filter/mail_filter.py >> /home/pi/mail-filter/mail_filter.log 2>&1
+*/5 * * * * . /home/pi/.config/imap-mail-filter/secrets.env && /usr/bin/python3 /home/pi/imap-mail-filter/imap_mail_filter.py >> /home/pi/imap-mail-filter/imap_mail_filter.log 2>&1
 ```
 
 The variable of an account with `"mail_enabled": false` is not checked, so it need not be set.
 
-Source the same file before running `mail_filter.py` or `list_folders.py` by hand.
+Source the same file before running `imap_mail_filter.py` or `list_folders.py` by hand.
 
 A process's environment is readable only by its own user and root, so this is as private as a `chmod 600` `accounts.local.json5`, not more. The gain is that the secrets sit in one small file outside the project, and the password manager remains their master copy. Prefer application-specific passwords, which can be revoked individually.
 

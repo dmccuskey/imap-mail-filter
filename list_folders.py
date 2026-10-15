@@ -2,7 +2,7 @@ import sys
 import imaplib
 from pathlib import Path
 
-from mail_filter import account_password, load_json, parse_list_entry, password_problems
+from imap_mail_filter import account_password, load_json, parse_list_entry, password_problems
 
 
 CONFIG_FILE = Path(__file__).resolve().parent / "accounts.local.json5"

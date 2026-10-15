@@ -1,6 +1,6 @@
-# Mail Filter Configuration
+# IMAP Mail Filter Configuration
 
-Mail Filter uses JSON5 configuration files so comments and trailing commas can be used.
+IMAP Mail Filter uses JSON5 configuration files so comments and trailing commas can be used.
 
 The live configuration is intentionally separated from the example configuration and should remain outside Git.
 
@@ -19,7 +19,7 @@ rules.local.json5
 
 The `.local.json5` files contain the actual deployment configuration.
 
-The `.local.json5` files must be located in the same directory as `mail_filter.py` and `list_folders.py`; both scripts resolve them relative to their own location.
+The `.local.json5` files must be located in the same directory as `imap_mail_filter.py` and `list_folders.py`; both scripts resolve them relative to their own location.
 
 All three files have the same shape: an object keyed by account ID, with that account's settings as the value.
 
@@ -62,7 +62,7 @@ Structure:
   "fastmail.com": {
     "imap_host": "imap.fastmail.com",
     "username": "me@fastmail.com",
-    "password_env": "MAILFILTER_PW_FASTMAIL"
+    "password_env": "IMAP_MAIL_FILTER_PW_FASTMAIL"
   }
 }
 ```
@@ -256,7 +256,7 @@ Earlier versions wrapped two of the files:
 
 To upgrade, remove the `"accounts"` list and make each account's `id` its key (dropping the `"id"` field), and remove the `"folders"` wrapper. `rules.local.json5` is unchanged.
 
-An old-format file is never guessed at: `mail_filter.py` logs an `ERROR: ... uses the old format` line for each one, processes no mail, and exits with status 1. `list_folders.py` also refuses the old `accounts.local.json5` format.
+An old-format file is never guessed at: `imap_mail_filter.py` logs an `ERROR: ... uses the old format` line for each one, processes no mail, and exits with status 1. `list_folders.py` also refuses the old `accounts.local.json5` format.
 
 ## Local vs Example Configuration
 
@@ -275,4 +275,4 @@ The separation provides:
 
 JSON5 is used instead of strict JSON to allow configuration comments and trailing commas.
 
-Mail Filter includes its own copy of the `json5` Python package in `vendor/json5/`, so there is nothing to install. The bundled copy is always used, even when a `json5` package is installed, so every machine parses the configuration the same way. See [vendor/README.md](../vendor/README.md) for its version, license, and how to update it.
+IMAP Mail Filter includes its own copy of the `json5` Python package in `vendor/json5/`, so there is nothing to install. The bundled copy is always used, even when a `json5` package is installed, so every machine parses the configuration the same way. See [vendor/README.md](../vendor/README.md) for its version, license, and how to update it.
