@@ -157,7 +157,7 @@ Run `crontab -e` and add a line that runs the filter every 5 minutes, using thos
 
 The filter's output is appended to `imap_mail_filter.log`; check it with `tail imap_mail_filter.log`.
 
-**Going further:** on a Mac, cron can't read folders such as `Documents` without Full Disk Access, and launchd is the native scheduler; on Windows, use Task Scheduler. Both are in [Installation](docs/installation.md). For a long-running setup, see [Log Rotation](docs/operations.md#log-rotation).
+**Going further:** on a Mac, cron can't read folders such as `Documents` without Full Disk Access, and launchd is the native scheduler; on Windows, use Task Scheduler. Both are in [Installation](docs/installation.md). For a long-running setup, keep the log outside the checkout (see [Logging](docs/operations.md#logging)) and set up [Log Rotation](docs/operations.md#log-rotation).
 
 To update later, run `git pull` in the `imap-mail-filter` directory. Your `.local.json5` files are not touched.
 
