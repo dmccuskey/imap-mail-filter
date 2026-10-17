@@ -81,10 +81,20 @@ The intended deployment model is a cron job that runs the filter periodically.
 Example:
 
 ```cron
-*/5 * * * * /usr/bin/python3 /home/pi/imap-mail-filter/imap_mail_filter.py >> /home/pi/imap-mail-filter/imap_mail_filter.log 2>&1
+*/5 * * * * /usr/bin/python3 /home/pi/imap-mail-filter/imap_mail_filter.py >> /home/pi/.local/state/imap-mail-filter/imap_mail_filter.log 2>&1
 ```
 
-This causes the filter to run every five minutes.
+This causes the filter to run every five minutes. The log goes in its own folder (see [Logging](#logging)), which must exist first.
+
+Runs can be spread out at night, when mail matters less, with one line per schedule:
+
+```cron
+# every 5 minutes from 6:00 to 21:55
+*/5 6-21 * * * /usr/bin/python3 /home/pi/imap-mail-filter/imap_mail_filter.py >> /home/pi/.local/state/imap-mail-filter/imap_mail_filter.log 2>&1
+
+# every 30 minutes from 22:00 to 5:30
+*/30 22-23,0-5 * * * /usr/bin/python3 /home/pi/imap-mail-filter/imap_mail_filter.py >> /home/pi/.local/state/imap-mail-filter/imap_mail_filter.log 2>&1
+```
 
 For macOS (cron or launchd) and Windows (Task Scheduler), see [Installation](installation.md).
 
@@ -96,11 +106,13 @@ If `rules.local.json5` has an invalid rule, every cron run logs the startup rule
 
 The application logs to standard output.
 
-A cron deployment can redirect that output to:
+A cron deployment redirects that output to a file, `imap_mail_filter.log`. On Linux and the Raspberry Pi, keep it in `~/.local/state/imap-mail-filter/`, the usual place for a program's own logs when it runs as your user: it needs no root, and it keeps the log out of the checkout, where a fresh clone or `git clean` would lose it. Create the folder once:
 
-```text
-imap_mail_filter.log
+```bash
+mkdir -p ~/.local/state/imap-mail-filter
 ```
+
+If the folder is missing, the shell can't open the log, so the filter doesn't run, and the error goes to cron's mail, not to the log. The [Quick Start](../README.md#7-run-it-on-a-schedule) keeps the log in the checkout instead, which also works: `*.log` is ignored by Git.
 
 Log entries include timestamps and account/rule context.
 
@@ -200,7 +212,7 @@ The historical deployment configuration uses `logrotate`.
 Example:
 
 ```text
-/home/pi/imap-mail-filter/imap_mail_filter.log {
+/home/pi/.local/state/imap-mail-filter/imap_mail_filter.log {
     su pi pi
     daily
     rotate 14
@@ -220,7 +232,7 @@ This should be installed under:
 
 Keep the `su pi pi` line (use your own user and group if not `pi`). It makes
 logrotate rotate the file as the owning user rather than root. It is required
-when `/home/pi/imap-mail-filter` is group- or world-writable (for example, created
+when the log's folder is group- or world-writable (for example, created
 under a `umask` of `002`): without it, logrotate silently skips the file with
 "parent directory has insecure permissions". Check with
 `sudo logrotate -d /etc/logrotate.d/imap-mail-filter`.
@@ -248,12 +260,35 @@ chmod 600 /home/pi/.config/imap-mail-filter/secrets.env
 Cron does not read shell startup files, so source the secrets file in the cron line:
 
 ```cron
-*/5 * * * * . /home/pi/.config/imap-mail-filter/secrets.env && /usr/bin/python3 /home/pi/imap-mail-filter/imap_mail_filter.py >> /home/pi/imap-mail-filter/imap_mail_filter.log 2>&1
+*/5 * * * * . /home/pi/.config/imap-mail-filter/secrets.env && /usr/bin/python3 /home/pi/imap-mail-filter/imap_mail_filter.py >> /home/pi/.local/state/imap-mail-filter/imap_mail_filter.log 2>&1
 ```
 
 The variable of an account with `"mail_enabled": false` is not checked, so it need not be set.
 
 Source the same file before running `imap_mail_filter.py` or `list_folders.py` by hand.
+
+Or put both in a wrapper script, which cron and runs by hand share. Keep it outside the checkout, for example as `/home/pi/bin/imap-mail-filter.sh`, so `git status` in the checkout stays clean:
+
+```bash
+#!/bin/bash
+
+cd /home/pi/imap-mail-filter || exit 1
+
+# load the passwords for password_env; stop if the file is missing
+. /home/pi/.config/imap-mail-filter/secrets.env || exit 1
+
+exec /usr/bin/python3 imap_mail_filter.py
+```
+
+```bash
+chmod +x /home/pi/bin/imap-mail-filter.sh
+```
+
+The `|| exit 1` stops the run with the shell's own error, such as `No such file or directory`, instead of the filter's errors for unset variables. The cron line then calls the script, and keeps the log redirection:
+
+```cron
+*/5 * * * * /home/pi/bin/imap-mail-filter.sh >> /home/pi/.local/state/imap-mail-filter/imap_mail_filter.log 2>&1
+```
 
 A process's environment is readable only by its own user and root, so this is as private as a `chmod 600` `accounts.local.json5`, not more. The gain is that the secrets sit in one small file outside the project, and the password manager remains their master copy. Prefer application-specific passwords, which can be revoked individually.
 

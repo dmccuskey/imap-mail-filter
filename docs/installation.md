@@ -109,8 +109,10 @@ Then continue with [step 2 of the Quick Start](../README.md#2-add-your-account).
 Use cron as in the Quick Start. On a Raspberry Pi with the default `pi` user:
 
 ```cron
-*/5 * * * * /usr/bin/python3 /home/pi/imap-mail-filter/imap_mail_filter.py >> /home/pi/imap-mail-filter/imap_mail_filter.log 2>&1
+*/5 * * * * /usr/bin/python3 /home/pi/imap-mail-filter/imap_mail_filter.py >> /home/pi/.local/state/imap-mail-filter/imap_mail_filter.log 2>&1
 ```
+
+The log goes in `~/.local/state/imap-mail-filter/`, outside the checkout; create the folder first with `mkdir -p ~/.local/state/imap-mail-filter` (see [Logging](operations.md#logging)).
 
 For a filter that runs for months, set up [Log Rotation](operations.md#log-rotation) so `imap_mail_filter.log` doesn't grow without limit. If you keep passwords in environment variables, the cron line must load them; see [Passwords from Environment Variables](operations.md#passwords-from-environment-variables).
 
